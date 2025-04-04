@@ -3,7 +3,7 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import { db } from '../database/index.js';
+import { getDb, getAll, runQuery } from '../database/index.js';
 import { logger } from '../utils/logger.js';
 
 // Get current directory
@@ -14,13 +14,12 @@ const __dirname = dirname(__filename);
 export function setupDashboardRoutes(app) {
   const router = express.Router();
   
-  // Dashboard home
-  router.get('/', (req, res) => {
-    res.redirect('/dashboard/');
-  });
-  
   // Dashboard root
   router.get('/', (req, res) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('Surrogate-Control', 'no-store');
     res.sendFile(path.join(__dirname, '../../public/dashboard.html'));
   });
   
@@ -36,7 +35,7 @@ export function setupDashboardRoutes(app) {
   // Get API keys
   router.get('/api/keys', async (req, res) => {
     try {
-      const keys = await db('api_keys').select('id', 'service');
+      const keys = await getAll('SELECT id, service FROM api_keys');
       res.json({ keys });
     } catch (error) {
       logger.error(`Error fetching API keys: ${error.message}`);
@@ -54,22 +53,20 @@ export function setupDashboardRoutes(app) {
       }
       
       // Check if service exists
-      const existing = await db('api_keys').where({ service }).first();
+      const existing = await getAll('SELECT * FROM api_keys WHERE service = ?', [service]);
       
-      if (existing) {
+      if (existing && existing.length > 0) {
         // Update existing key
-        await db('api_keys').where({ service }).update({
-          key,
-          updated_at: new Date()
-        });
+        await runQuery(
+          'UPDATE api_keys SET key = ?, updated_at = CURRENT_TIMESTAMP WHERE service = ?',
+          [key, service]
+        );
       } else {
         // Insert new key
-        await db('api_keys').insert({
-          service,
-          key,
-          created_at: new Date(),
-          updated_at: new Date()
-        });
+        await runQuery(
+          'INSERT INTO api_keys (service, key, created_at, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)',
+          [service, key]
+        );
       }
       
       res.json({ success: true, message: `API key for ${service} updated` });
@@ -83,7 +80,7 @@ export function setupDashboardRoutes(app) {
   router.get('/api/projects', async (req, res) => {
     try {
       logger.debug('Fetching all projects');
-      const projects = await db('projects').select('*');
+      const projects = await getAll('SELECT * FROM projects');
       res.json({ projects });
     } catch (error) {
       logger.error(`Error fetching projects: ${error.message}`);
@@ -100,19 +97,16 @@ export function setupDashboardRoutes(app) {
         return res.status(400).json({ error: 'Name and path are required' });
       }
       
-      const [id] = await db('projects').insert({
-        name,
-        description,
-        path,
-        created_at: new Date(),
-        updated_at: new Date()
-      });
+      const result = await runQuery(
+        'INSERT INTO projects (name, description, path, created_at, updated_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)',
+        [name, description, path]
+      );
       
       res.json({
         success: true,
         message: 'Project added successfully',
         project: {
-          id,
+          id: result.lastID,
           name,
           description,
           path

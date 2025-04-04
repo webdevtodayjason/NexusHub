@@ -10,7 +10,7 @@ NexusHub is a unified MCP (Model Context Protocol) server that provides AI assis
 
 - **HTTP Server**: Express-based server providing RESTful API and MCP over HTTP
 - **STDIO Client**: Direct stdio-based interface for Claude Desktop
-- **Web Dashboard**: Tailwind CSS admin interface for configuration and management
+- **Web Dashboard**: Protocol design system admin interface with dark mode for configuration and management
 - **MCP Integration**: Implements the Model Context Protocol for AI tool communication
 - **External Services**: Integrates with Memory, GitHub, and Brave Search MCP servers
 
@@ -50,7 +50,7 @@ NexusHub is a unified MCP (Model Context Protocol) server that provides AI assis
 
 - **Node.js**: JavaScript runtime environment
 - **Express**: Web framework for HTTP API
-- **Tailwind CSS**: Utility-first CSS framework for dashboard UI
+- **Protocol Design System**: Modern design system based on Tailwind CSS for dashboard UI
 - **Alpine.js**: Lightweight JavaScript framework for UI interactions
 - **SQLite**: Simple file-based database (via better-sqlite3)
 - **Docker**: Containerization for services

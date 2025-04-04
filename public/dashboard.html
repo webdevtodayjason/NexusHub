@@ -1,28 +1,75 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>NexusHub Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
                         primary: {
-                            50: '#eef2ff',
-                            100: '#e0e7ff',
-                            200: '#c7d2fe',
-                            300: '#a5b4fc',
-                            400: '#818cf8',
-                            500: '#6366f1',
-                            600: '#4f46e5',
-                            700: '#4338ca',
-                            800: '#3730a3',
-                            900: '#312e81',
-                        }
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            200: '#99f6e4',
+                            300: '#5eead4',
+                            400: '#2dd4bf',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            700: '#0f766e',
+                            800: '#115e59',
+                            900: '#134e4a',
+                            950: '#042f2e',
+                        },
+                        zinc: {
+                            50: '#fafafa',
+                            100: '#f4f4f5',
+                            200: '#e4e4e7',
+                            300: '#d4d4d8',
+                            400: '#a1a1aa',
+                            500: '#71717a',
+                            600: '#52525b',
+                            700: '#3f3f46',
+                            800: '#27272a',
+                            900: '#18181b',
+                            950: '#09090b',
+                        },
+                        emerald: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            200: '#a7f3d0',
+                            300: '#6ee7b7',
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                            950: '#022c22',
+                        },
+                    },
+                    fontSize: {
+                        '2xs': ['0.75rem', { lineHeight: '1.25rem' }],
+                        'xs': ['0.8125rem', { lineHeight: '1.5rem' }],
+                        'sm': ['0.875rem', { lineHeight: '1.5rem' }],
+                        'base': ['1rem', { lineHeight: '1.75rem' }],
+                        'lg': ['1.125rem', { lineHeight: '1.75rem' }],
+                        'xl': ['1.25rem', { lineHeight: '1.75rem' }],
+                        '2xl': ['1.5rem', { lineHeight: '2rem' }],
+                        '3xl': ['1.875rem', { lineHeight: '2.25rem' }],
+                    },
+                    boxShadow: {
+                        glow: '0 0 4px rgb(0 0 0 / 0.1)',
+                    },
+                    borderRadius: {
+                        '4xl': '2rem',
                     }
                 }
             }
@@ -31,8 +78,24 @@
     <style>
         [x-cloak] { display: none !important; }
         
+        :root {
+            --shiki-color-text: theme('colors.white');
+            --shiki-token-constant: theme('colors.emerald.300');
+            --shiki-token-string: theme('colors.emerald.300');
+            --shiki-token-comment: theme('colors.zinc.500');
+            --shiki-token-keyword: theme('colors.sky.300');
+            --shiki-token-parameter: theme('colors.pink.300');
+            --shiki-token-function: theme('colors.violet.300');
+            --shiki-token-string-expression: theme('colors.emerald.300');
+            --shiki-token-punctuation: theme('colors.zinc.200');
+        }
+        
+        html.dark {
+            color-scheme: dark;
+        }
+        
         .dropzone {
-            border: 2px dashed #6366f1;
+            border: 2px dashed var(--tw-text-opacity-primary);
             border-radius: 0.5rem;
             min-height: 120px;
             display: flex;
@@ -44,147 +107,276 @@
         }
         
         .dropzone:hover, .dropzone.active {
-            background-color: #eef2ff;
-            border-color: #4f46e5;
+            background-color: theme('colors.primary.50');
+            border-color: theme('colors.primary.600');
+        }
+        
+        .dark .dropzone:hover, .dark .dropzone.active {
+            background-color: theme('colors.zinc.800');
+            border-color: theme('colors.primary.500');
+        }
+
+        /* Protocol design system specific styles */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .bento-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .bento-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .bento-card {
+            --tw-border-opacity: 1;
+            border-color: rgb(228 228 231 / var(--tw-border-opacity));
+            --tw-bg-opacity: 1;
+            background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+            --tw-ring-opacity: 0.05;
+            --tw-ring-color: rgb(0 0 0 / var(--tw-ring-opacity));
+            --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+            --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .dark .bento-card {
+            --tw-border-opacity: 1;
+            border-color: rgb(63 63 70 / var(--tw-border-opacity));
+            --tw-bg-opacity: 1;
+            background-color: rgb(39 39 42 / var(--tw-bg-opacity));
+            --tw-ring-opacity: 0.1;
+            --tw-ring-color: rgb(255 255 255 / var(--tw-ring-opacity));
+        }
+
+        .bento-card:hover {
+            transform: translateY(-2px);
+            --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
+            box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+        }
+
+        .dark .bento-card:hover {
+            --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.2);
+            --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
+            box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+        }
+
+        /* Protocol design system typography */
+        .prose {
+            --tw-prose-body: theme('colors.zinc.700');
+            --tw-prose-headings: theme('colors.zinc.900');
+            --tw-prose-links: theme('colors.emerald.500');
+            --tw-prose-links-hover: theme('colors.emerald.600');
+            --tw-prose-links-underline: theme('colors.emerald.500 / 0.3');
+            --tw-prose-bold: theme('colors.zinc.900');
+            --tw-prose-counters: theme('colors.zinc.500');
+            --tw-prose-bullets: theme('colors.zinc.300');
+            --tw-prose-hr: theme('colors.zinc.900 / 0.05');
+            --tw-prose-quotes: theme('colors.zinc.900');
+            --tw-prose-quote-borders: theme('colors.zinc.200');
+            --tw-prose-captions: theme('colors.zinc.500');
+            --tw-prose-code: theme('colors.zinc.900');
+            --tw-prose-code-bg: theme('colors.zinc.100');
+            --tw-prose-code-ring: theme('colors.zinc.300');
+            --tw-prose-th-borders: theme('colors.zinc.300');
+            --tw-prose-td-borders: theme('colors.zinc.200');
+        }
+
+        .dark .prose {
+            --tw-prose-body: theme('colors.zinc.400');
+            --tw-prose-headings: theme('colors.white');
+            --tw-prose-links: theme('colors.emerald.400');
+            --tw-prose-links-hover: theme('colors.emerald.500');
+            --tw-prose-links-underline: theme('colors.emerald.500 / 0.3');
+            --tw-prose-bold: theme('colors.white');
+            --tw-prose-counters: theme('colors.zinc.400');
+            --tw-prose-bullets: theme('colors.zinc.600');
+            --tw-prose-hr: theme('colors.white / 0.05');
+            --tw-prose-quotes: theme('colors.zinc.100');
+            --tw-prose-quote-borders: theme('colors.zinc.700');
+            --tw-prose-captions: theme('colors.zinc.400');
+            --tw-prose-code: theme('colors.white');
+            --tw-prose-code-bg: theme('colors.zinc.700 / 0.15');
+            --tw-prose-code-ring: theme('colors.white / 0.1');
+            --tw-prose-th-borders: theme('colors.zinc.600');
+            --tw-prose-td-borders: theme('colors.zinc.700');
         }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-zinc-50 dark:bg-zinc-900 min-h-full">
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
     <div x-data="dashboard()" x-cloak>
-        <!-- Header -->
-        <header class="bg-white shadow-sm">
-            <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+        <!-- Dark Mode Toggle Debug -->
+        <div class="fixed top-2 right-2 z-[100] bg-zinc-50 dark:bg-zinc-800 p-2 rounded-lg shadow-lg ring-1 ring-zinc-200 dark:ring-zinc-700/80">
+            <button
+                @click="toggleDarkMode()"
+                class="flex items-center justify-center p-2 rounded-md bg-zinc-100 dark:bg-zinc-700 hover:bg-zinc-200 dark:hover:bg-zinc-600"
+            >
+                <span x-text="darkMode ? 'Dark Mode: ON' : 'Dark Mode: OFF'" class="text-xs text-zinc-800 dark:text-zinc-200"></span>
+            </button>
+        </div>
+
+        <!-- Header - Protocol Design System Style -->
+        <header class="sticky top-0 z-50 w-full backdrop-blur-sm bg-zinc-50/90 dark:bg-zinc-900/90 border-b border-zinc-200 dark:border-zinc-800 ring-1 ring-zinc-200 dark:ring-zinc-700/80">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
                 <div class="flex items-center">
-                    <svg class="h-8 w-8 text-primary-600" fill="currentColor" viewBox="0 0 24 24">
+                    <svg class="h-8 w-8 text-emerald-500 dark:text-emerald-400" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
                     </svg>
-                    <h1 class="ml-3 text-2xl font-bold text-gray-900">NexusHub</h1>
+                    <h1 class="ml-3 text-xl font-bold text-zinc-900 dark:text-white">NexusHub</h1>
                 </div>
                 
-                <div>
-                    <span x-show="serverStatus === 'online'" class="flex items-center">
-                        <span class="inline-block h-3 w-3 rounded-full bg-green-500 mr-2"></span>
-                        <span class="text-sm font-medium text-gray-700">Server Online</span>
+                <div class="flex items-center space-x-4">
+                    <span x-show="serverStatus === 'online'" class="hidden md:flex items-center">
+                        <span class="inline-block h-2.5 w-2.5 rounded-full bg-emerald-500 mr-2"></span>
+                        <span class="text-xs font-medium text-zinc-600 dark:text-zinc-300">Server Online</span>
                     </span>
-                    <span x-show="serverStatus === 'offline'" class="flex items-center">
-                        <span class="inline-block h-3 w-3 rounded-full bg-red-500 mr-2"></span>
-                        <span class="text-sm font-medium text-gray-700">Server Offline</span>
+                    <span x-show="serverStatus === 'offline'" class="hidden md:flex items-center">
+                        <span class="inline-block h-2.5 w-2.5 rounded-full bg-red-500 mr-2"></span>
+                        <span class="text-xs font-medium text-zinc-600 dark:text-zinc-300">Server Offline</span>
                     </span>
-                    <span x-show="serverStatus === 'checking'" class="flex items-center">
-                        <span class="inline-block h-3 w-3 rounded-full bg-yellow-500 mr-2 animate-pulse"></span>
-                        <span class="text-sm font-medium text-gray-700">Checking Status...</span>
+                    <span x-show="serverStatus === 'checking'" class="hidden md:flex items-center">
+                        <span class="inline-block h-2.5 w-2.5 rounded-full bg-yellow-500 mr-2 animate-pulse"></span>
+                        <span class="text-xs font-medium text-zinc-600 dark:text-zinc-300">Checking Status...</span>
                     </span>
+                    
+                    <!-- Dark mode toggle - Protocol Design System Style -->
+                    <button @click="toggleDarkMode()" 
+                            class="flex items-center justify-center w-6 h-6 rounded-md transition hover:bg-zinc-900/5 dark:hover:bg-white/5"
+                            aria-label="Toggle dark mode">
+                        <svg x-show="!darkMode" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 stroke-zinc-900" viewBox="0 0 20 20" fill="none">
+                            <path stroke-linecap="round" d="M12.5 10a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z" />
+                            <path stroke-linecap="round" d="M10 5.5v-1M13.182 6.818l.707-.707M14.5 10h1M13.182 13.182l.707.707M10 15.5v-1M6.11 13.889l.708-.707M4.5 10h1M6.11 6.111l.708.707" />
+                        </svg>
+                        <svg x-show="darkMode" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 stroke-white" viewBox="0 0 20 20" fill="none">
+                            <path d="M15.224 11.724a5.5 5.5 0 0 1-6.949-6.949 5.5 5.5 0 1 0 6.949 6.949Z" />
+                        </svg>
+                    </button>
                 </div>
             </div>
         </header>
         
         <!-- Main content -->
-        <main class="container mx-auto px-4 py-8">
-            <!-- Status Cards -->
+        <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Service Status - Bento Grid Layout -->
             <div class="mb-8">
-                <h2 class="text-lg font-semibold text-gray-900 mb-4">Service Status</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <h2 class="text-lg font-semibold text-zinc-900 dark:text-white mb-4">Service Status</h2>
+                <div class="bento-grid">
                     <!-- NexusHub MCP Server -->
-                    <div class="bg-white rounded-lg shadow p-6">
+                    <div class="bento-card p-6">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-md font-medium text-gray-700">NexusHub MCP</h3>
-                            <span x-show="serviceStatus.nexushub === 'online'" class="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Online</span>
-                            <span x-show="serviceStatus.nexushub === 'offline'" class="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">Offline</span>
+                            <h3 class="text-md font-medium text-zinc-700 dark:text-zinc-200">NexusHub MCP</h3>
+                            <span x-show="serviceStatus.nexushub === 'online'" class="px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-800/30 text-emerald-800 dark:text-emerald-300">Online</span>
+                            <span x-show="serviceStatus.nexushub === 'offline'" class="px-2 py-1 rounded-full text-xs font-medium bg-red-100 dark:bg-red-800/30 text-red-800 dark:text-red-300">Offline</span>
+                            <span x-show="serviceStatus.nexushub === 'checking'" class="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-800/30 text-yellow-800 dark:text-yellow-300">Checking...</span>
                         </div>
                         <div class="flex items-center justify-between">
-                            <span class="text-sm text-gray-500">Local HTTP Server</span>
-                            <button @click="restartService('nexushub')" class="text-sm text-primary-600 hover:text-primary-800">Restart</button>
+                            <span class="text-xs text-zinc-500 dark:text-zinc-400">Local HTTP Server</span>
+                            <button @click="restartService('nexushub')" class="text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 font-medium">Restart</button>
                         </div>
                     </div>
                     
                     <!-- Memory MCP -->
-                    <div class="bg-white rounded-lg shadow p-6">
+                    <div class="bento-card p-6">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-md font-medium text-gray-700">Memory MCP</h3>
-                            <span x-show="serviceStatus.memory === 'online'" class="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Online</span>
-                            <span x-show="serviceStatus.memory === 'offline'" class="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">Offline</span>
+                            <h3 class="text-md font-medium text-zinc-700 dark:text-zinc-200">Memory MCP</h3>
+                            <span x-show="serviceStatus.memory === 'online'" class="px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-800/30 text-emerald-800 dark:text-emerald-300">Online</span>
+                            <span x-show="serviceStatus.memory === 'offline'" class="px-2 py-1 rounded-full text-xs font-medium bg-red-100 dark:bg-red-800/30 text-red-800 dark:text-red-300">Offline</span>
+                            <span x-show="serviceStatus.memory === 'checking'" class="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-800/30 text-yellow-800 dark:text-yellow-300">Checking...</span>
                         </div>
                         <div class="flex items-center justify-between">
-                            <span class="text-sm text-gray-500">Knowledge Graph</span>
-                            <button @click="restartService('memory')" class="text-sm text-primary-600 hover:text-primary-800">Restart</button>
+                            <span class="text-xs text-zinc-500 dark:text-zinc-400">Knowledge Graph</span>
+                            <button @click="restartService('memory')" class="text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 font-medium">Restart</button>
                         </div>
                     </div>
                     
                     <!-- GitHub MCP -->
-                    <div class="bg-white rounded-lg shadow p-6">
+                    <div class="bento-card p-6">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-md font-medium text-gray-700">GitHub MCP</h3>
-                            <span x-show="serviceStatus.github === 'online'" class="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Online</span>
-                            <span x-show="serviceStatus.github === 'offline'" class="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">Offline</span>
+                            <h3 class="text-md font-medium text-zinc-700 dark:text-zinc-200">GitHub MCP</h3>
+                            <span x-show="serviceStatus.github === 'online'" class="px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-800/30 text-emerald-800 dark:text-emerald-300">Online</span>
+                            <span x-show="serviceStatus.github === 'offline'" class="px-2 py-1 rounded-full text-xs font-medium bg-red-100 dark:bg-red-800/30 text-red-800 dark:text-red-300">Offline</span>
+                            <span x-show="serviceStatus.github === 'checking'" class="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-800/30 text-yellow-800 dark:text-yellow-300">Checking...</span>
                         </div>
                         <div class="flex items-center justify-between">
-                            <span class="text-sm text-gray-500">Repository Integration</span>
-                            <button @click="restartService('github')" class="text-sm text-primary-600 hover:text-primary-800">Restart</button>
+                            <span class="text-xs text-zinc-500 dark:text-zinc-400">Repository Integration</span>
+                            <button @click="restartService('github')" class="text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 font-medium">Restart</button>
                         </div>
                     </div>
                     
                     <!-- Brave Search MCP -->
-                    <div class="bg-white rounded-lg shadow p-6">
+                    <div class="bento-card p-6">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-md font-medium text-gray-700">Brave Search MCP</h3>
-                            <span x-show="serviceStatus.brave === 'online'" class="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Online</span>
-                            <span x-show="serviceStatus.brave === 'offline'" class="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">Offline</span>
+                            <h3 class="text-md font-medium text-zinc-700 dark:text-zinc-200">Brave Search MCP</h3>
+                            <span x-show="serviceStatus.brave === 'online'" class="px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-800/30 text-emerald-800 dark:text-emerald-300">Online</span>
+                            <span x-show="serviceStatus.brave === 'offline'" class="px-2 py-1 rounded-full text-xs font-medium bg-red-100 dark:bg-red-800/30 text-red-800 dark:text-red-300">Offline</span>
+                            <span x-show="serviceStatus.brave === 'checking'" class="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-800/30 text-yellow-800 dark:text-yellow-300">Checking...</span>
                         </div>
                         <div class="flex items-center justify-between">
-                            <span class="text-sm text-gray-500">Web Search</span>
-                            <button @click="restartService('brave')" class="text-sm text-primary-600 hover:text-primary-800">Restart</button>
+                            <span class="text-xs text-zinc-500 dark:text-zinc-400">Web Search</span>
+                            <button @click="restartService('brave')" class="text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 font-medium">Restart</button>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Tabs Navigation -->
+            <!-- Tabs Navigation - Protocol Style -->
             <div class="mb-8">
-                <nav class="flex space-x-4 border-b border-gray-200">
-                    <button @click="activeTab = 'api-keys'" :class="{'border-primary-500 text-primary-600 pb-4 -mb-px border-b-2': activeTab === 'api-keys', 'text-gray-500 hover:text-gray-700 pb-4': activeTab !== 'api-keys'}" class="font-medium text-sm">
+                <nav class="flex space-x-4 border-b border-zinc-200 dark:border-zinc-700">
+                    <button @click="activeTab = 'api-keys'" :class="{'text-emerald-600 dark:text-emerald-400 pb-4 -mb-px border-b-2 border-emerald-600 dark:border-emerald-400': activeTab === 'api-keys', 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 pb-4': activeTab !== 'api-keys'}" class="font-medium text-sm">
                         API Keys
                     </button>
-                    <button @click="activeTab = 'vector-db'" :class="{'border-primary-500 text-primary-600 pb-4 -mb-px border-b-2': activeTab === 'vector-db', 'text-gray-500 hover:text-gray-700 pb-4': activeTab !== 'vector-db'}" class="font-medium text-sm">
+                    <button @click="activeTab = 'vector-db'" :class="{'text-emerald-600 dark:text-emerald-400 pb-4 -mb-px border-b-2 border-emerald-600 dark:border-emerald-400': activeTab === 'vector-db', 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 pb-4': activeTab !== 'vector-db'}" class="font-medium text-sm">
                         Vector Database
                     </button>
-                    <button @click="activeTab = 'prompts'" :class="{'border-primary-500 text-primary-600 pb-4 -mb-px border-b-2': activeTab === 'prompts', 'text-gray-500 hover:text-gray-700 pb-4': activeTab !== 'prompts'}" class="font-medium text-sm">
+                    <button @click="activeTab = 'prompts'" :class="{'text-emerald-600 dark:text-emerald-400 pb-4 -mb-px border-b-2 border-emerald-600 dark:border-emerald-400': activeTab === 'prompts', 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 pb-4': activeTab !== 'prompts'}" class="font-medium text-sm">
                         Prompts
                     </button>
-                    <button @click="activeTab = 'help'" :class="{'border-primary-500 text-primary-600 pb-4 -mb-px border-b-2': activeTab === 'help', 'text-gray-500 hover:text-gray-700 pb-4': activeTab !== 'help'}" class="font-medium text-sm">
+                    <button @click="activeTab = 'help'" :class="{'text-emerald-600 dark:text-emerald-400 pb-4 -mb-px border-b-2 border-emerald-600 dark:border-emerald-400': activeTab === 'help', 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 pb-4': activeTab !== 'help'}" class="font-medium text-sm">
                         Help
                     </button>
                 </nav>
                 
                 <!-- API Keys Tab Content -->
                 <div x-show="activeTab === 'api-keys'" class="mt-6">
-                    <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <div class="bento-card overflow-hidden">
                         <div class="p-6">
-                            <h2 class="text-lg font-medium text-gray-900 mb-4">API Keys Configuration</h2>
+                            <h2 class="text-lg font-medium text-zinc-900 dark:text-white mb-4">API Keys Configuration</h2>
                             
                             <div class="space-y-6">
                                 <template x-for="(key, service) in apiKeys" :key="service">
-                                    <div class="bg-gray-50 p-4 rounded-lg">
+                                    <div class="bg-zinc-50 dark:bg-zinc-800/50 rounded-lg p-4 ring-1 ring-zinc-200 dark:ring-zinc-700/80">
                                         <div class="flex items-center justify-between mb-3">
-                                            <h3 class="text-md font-medium text-gray-700" x-text="getServiceName(service)"></h3>
-                                            <span x-show="key" class="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Configured</span>
-                                            <span x-show="!key" class="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">Not Configured</span>
+                                            <h3 class="text-md font-medium text-zinc-700 dark:text-zinc-300" x-text="getServiceName(service)"></h3>
+                                            <span x-show="key" class="px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-800/30 text-emerald-800 dark:text-emerald-300">Configured</span>
+                                            <span x-show="!key" class="px-2 py-1 rounded-full text-xs font-medium bg-zinc-100 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-300">Not Configured</span>
                                         </div>
                                         
                                         <div class="mt-2">
-                                            <label :for="'api-key-' + service" class="block text-sm font-medium text-gray-700 mb-1">API Key</label>
+                                            <label :for="'api-key-' + service" class="block text-xs font-medium text-zinc-700 dark:text-zinc-400 mb-1">API Key</label>
                                             <div class="flex items-center">
-                                                <input :type="showApiKey[service] ? 'text' : 'password'" :id="'api-key-' + service" x-model="tempApiKeys[service]" class="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3">
-                                                <button @click="showApiKey[service] = !showApiKey[service]" type="button" class="ml-2 p-2 text-gray-400 hover:text-gray-500">
+                                                <input :type="showApiKey[service] ? 'text' : 'password'" :id="'api-key-' + service" x-model="tempApiKeys[service]" class="ring-1 ring-zinc-200 dark:ring-zinc-700 focus:ring-emerald-500 focus:border-emerald-500 block w-full sm:text-sm border-0 dark:bg-zinc-800 dark:text-zinc-300 rounded-md py-2 px-3">
+                                                <button @click="showApiKey[service] = !showApiKey[service]" type="button" class="ml-2 p-2 text-zinc-400 hover:text-zinc-500 dark:text-zinc-500 dark:hover:text-zinc-400">
                                                     <i :class="showApiKey[service] ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
                                                 </button>
                                             </div>
                                         </div>
                                         
                                         <div class="mt-3 flex justify-end">
-                                            <button @click="saveApiKey(service)" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                                            <button @click="saveApiKey(service)" class="inline-flex items-center px-4 py-2 border-0 text-xs font-medium rounded-md shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 dark:bg-emerald-700 dark:hover:bg-emerald-600">
                                                 Save Key
                                             </button>
                                         </div>
@@ -193,10 +385,10 @@
                             </div>
                             
                             <div class="mt-6">
-                                <button @click="reloadEnvironment" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                                <button @click="reloadEnvironment" class="inline-flex items-center px-4 py-2 border border-zinc-300 dark:border-zinc-700 text-xs font-medium rounded-md shadow-sm text-zinc-700 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
                                     <i class="fas fa-sync-alt mr-2"></i> Reload Environment
                                 </button>
-                                <p class="mt-2 text-sm text-gray-500">Reload environment variables without restarting the server</p>
+                                <p class="mt-2 text-xs text-zinc-500 dark:text-zinc-400">Reload environment variables without restarting the server</p>
                             </div>
                         </div>
                     </div>
@@ -204,13 +396,13 @@
                 
                 <!-- Vector Database Tab Content -->
                 <div x-show="activeTab === 'vector-db'" class="mt-6">
-                    <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <div class="bento-card overflow-hidden">
                         <div class="p-6">
-                            <h2 class="text-lg font-medium text-gray-900 mb-4">Vector Database Management</h2>
+                            <h2 class="text-lg font-medium text-zinc-900 dark:text-white mb-4">Vector Database Management</h2>
                             
                             <!-- File Upload Section -->
                             <div class="mb-6">
-                                <h3 class="text-md font-medium text-gray-700 mb-2">Upload Documents</h3>
+                                <h3 class="text-md font-medium text-zinc-700 dark:text-zinc-300 mb-2">Upload Documents</h3>
                                 
                                 <div class="dropzone"
                                      x-ref="dropzone"
@@ -220,17 +412,17 @@
                                      :class="{'active': dragover}"
                                      @click="$refs.fileInput.click()">
                                     <input type="file" x-ref="fileInput" class="hidden" multiple @change="handleFileSelect">
-                                    <i class="fas fa-cloud-upload-alt text-3xl text-primary-500 mb-2"></i>
-                                    <p class="text-sm text-gray-500">Drag and drop files here or click to browse</p>
-                                    <p class="text-xs text-gray-400 mt-1">Supported formats: PDF, DOCX, MD, TXT</p>
+                                    <i class="fas fa-cloud-upload-alt text-3xl text-emerald-500 mb-2"></i>
+                                    <p class="text-sm text-zinc-500 dark:text-zinc-400">Drag and drop files here or click to browse</p>
+                                    <p class="text-xs text-zinc-400 dark:text-zinc-500 mt-1">Supported formats: PDF, DOCX, MD, TXT</p>
                                 </div>
                                 
                                 <!-- URL input -->
                                 <div class="mt-4">
-                                    <label for="document-url" class="block text-sm font-medium text-gray-700 mb-1">Or add from URL</label>
+                                    <label for="document-url" class="block text-xs font-medium text-zinc-700 dark:text-zinc-400 mb-1">Or add from URL</label>
                                     <div class="flex">
-                                        <input type="text" id="document-url" x-model="documentUrl" placeholder="https://example.com/document.pdf" class="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-l-md py-2 px-3">
-                                        <button @click="ingestFromUrl" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-r-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                                        <input type="text" id="document-url" x-model="documentUrl" placeholder="https://example.com/document.pdf" class="ring-1 ring-zinc-200 dark:ring-zinc-700 focus:ring-emerald-500 focus:border-emerald-500 block w-full sm:text-sm border-0 dark:bg-zinc-800 dark:text-zinc-300 rounded-l-md py-2 px-3">
+                                        <button @click="ingestFromUrl" class="inline-flex items-center px-4 py-2 border-0 text-xs font-medium rounded-r-md shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 dark:bg-emerald-700 dark:hover:bg-emerald-600">
                                             Add
                                         </button>
                                     </div>
@@ -239,32 +431,32 @@
                             
                             <!-- Files list -->
                             <div>
-                                <h3 class="text-md font-medium text-gray-700 mb-2">Ingested Documents</h3>
+                                <h3 class="text-md font-medium text-zinc-700 dark:text-zinc-300 mb-2">Ingested Documents</h3>
                                 
-                                <div class="bg-gray-50 rounded-lg p-4" x-show="vectorDocuments.length === 0">
-                                    <p class="text-sm text-gray-500 text-center">No documents have been ingested yet</p>
+                                <div class="bg-zinc-50 dark:bg-zinc-800/50 rounded-lg p-4 ring-1 ring-zinc-200 dark:ring-zinc-700/80" x-show="vectorDocuments.length === 0">
+                                    <p class="text-sm text-zinc-500 dark:text-zinc-400 text-center">No documents have been ingested yet</p>
                                 </div>
                                 
-                                <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg" x-show="vectorDocuments.length > 0">
-                                    <table class="min-w-full divide-y divide-gray-300">
-                                        <thead class="bg-gray-50">
+                                <div class="overflow-hidden shadow ring-1 ring-black/5 dark:ring-white/10 rounded-lg" x-show="vectorDocuments.length > 0">
+                                    <table class="min-w-full divide-y divide-zinc-300 dark:divide-zinc-700">
+                                        <thead class="bg-zinc-50 dark:bg-zinc-800">
                                             <tr>
-                                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Title</th>
-                                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Source</th>
-                                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Date Added</th>
+                                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-xs font-semibold text-zinc-900 dark:text-zinc-200 sm:pl-6">Title</th>
+                                                <th scope="col" class="px-3 py-3.5 text-left text-xs font-semibold text-zinc-900 dark:text-zinc-200">Source</th>
+                                                <th scope="col" class="px-3 py-3.5 text-left text-xs font-semibold text-zinc-900 dark:text-zinc-200">Date Added</th>
                                                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
                                                     <span class="sr-only">Actions</span>
                                                 </th>
                                             </tr>
                                         </thead>
-                                        <tbody class="divide-y divide-gray-200 bg-white">
+                                        <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700 bg-white dark:bg-zinc-900">
                                             <template x-for="doc in vectorDocuments" :key="doc.id">
                                                 <tr>
-                                                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6" x-text="doc.title"></td>
-                                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500" x-text="doc.source"></td>
-                                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500" x-text="formatDate(doc.created_at)"></td>
+                                                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-zinc-900 dark:text-zinc-200 sm:pl-6" x-text="doc.title"></td>
+                                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-zinc-500 dark:text-zinc-400" x-text="doc.source"></td>
+                                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-zinc-500 dark:text-zinc-400" x-text="formatDate(doc.created_at)"></td>
                                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                                        <button @click="deleteVectorDocument(doc.id)" class="text-red-600 hover:text-red-900">
+                                                        <button @click="deleteVectorDocument(doc.id)" class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300">
                                                             <i class="fas fa-trash"></i> <span class="sr-only">Delete</span>
                                                         </button>
                                                     </td>
@@ -280,23 +472,23 @@
                 
                 <!-- Prompts Tab Content -->
                 <div x-show="activeTab === 'prompts'" class="mt-6">
-                    <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <div class="bento-card overflow-hidden">
                         <div class="p-6">
-                            <h2 class="text-lg font-medium text-gray-900 mb-4">Prompts for AI Coding</h2>
+                            <h2 class="text-lg font-medium text-zinc-900 dark:text-white mb-4">Prompts for AI Coding</h2>
                             
                             <!-- Prompt categories tabs -->
-                            <div class="border-b border-gray-200 mb-4">
+                            <div class="border-b border-zinc-200 dark:border-zinc-700 mb-4">
                                 <nav class="flex -mb-px space-x-4">
-                                    <button @click="promptCategory = 'general'" :class="{'border-primary-500 text-primary-600 pb-3 border-b-2': promptCategory === 'general', 'text-gray-500 hover:text-gray-700 pb-3': promptCategory !== 'general'}" class="font-medium text-sm">
+                                    <button @click="promptCategory = 'general'" :class="{'text-emerald-600 dark:text-emerald-400 pb-3 border-b-2 border-emerald-600 dark:border-emerald-400': promptCategory === 'general', 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 pb-3': promptCategory !== 'general'}" class="font-medium text-sm">
                                         General
                                     </button>
-                                    <button @click="promptCategory = 'tools'" :class="{'border-primary-500 text-primary-600 pb-3 border-b-2': promptCategory === 'tools', 'text-gray-500 hover:text-gray-700 pb-3': promptCategory !== 'tools'}" class="font-medium text-sm">
+                                    <button @click="promptCategory = 'tools'" :class="{'text-emerald-600 dark:text-emerald-400 pb-3 border-b-2 border-emerald-600 dark:border-emerald-400': promptCategory === 'tools', 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 pb-3': promptCategory !== 'tools'}" class="font-medium text-sm">
                                         Tool Usage
                                     </button>
-                                    <button @click="promptCategory = 'github'" :class="{'border-primary-500 text-primary-600 pb-3 border-b-2': promptCategory === 'github', 'text-gray-500 hover:text-gray-700 pb-3': promptCategory !== 'github'}" class="font-medium text-sm">
+                                    <button @click="promptCategory = 'github'" :class="{'text-emerald-600 dark:text-emerald-400 pb-3 border-b-2 border-emerald-600 dark:border-emerald-400': promptCategory === 'github', 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 pb-3': promptCategory !== 'github'}" class="font-medium text-sm">
                                         GitHub Integration
                                     </button>
-                                    <button @click="promptCategory = 'code'" :class="{'border-primary-500 text-primary-600 pb-3 border-b-2': promptCategory === 'code', 'text-gray-500 hover:text-gray-700 pb-3': promptCategory !== 'code'}" class="font-medium text-sm">
+                                    <button @click="promptCategory = 'code'" :class="{'text-emerald-600 dark:text-emerald-400 pb-3 border-b-2 border-emerald-600 dark:border-emerald-400': promptCategory === 'code', 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 pb-3': promptCategory !== 'code'}" class="font-medium text-sm">
                                         Code Patterns
                                     </button>
                                 </nav>
@@ -305,13 +497,13 @@
                             <!-- General prompts -->
                             <div x-show="promptCategory === 'general'">
                                 <template x-for="(prompt, index) in prompts.general" :key="index">
-                                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
-                                        <h3 class="text-md font-medium text-gray-700 mb-2" x-text="prompt.title"></h3>
-                                        <div class="bg-white p-3 rounded border border-gray-200 mb-2">
-                                            <pre class="text-sm text-gray-600 whitespace-pre-wrap" x-text="prompt.text"></pre>
+                                    <div class="bg-zinc-50 dark:bg-zinc-800/50 p-4 rounded-lg mb-4 ring-1 ring-zinc-200 dark:ring-zinc-700/80">
+                                        <h3 class="text-md font-medium text-zinc-700 dark:text-zinc-300 mb-2" x-text="prompt.title"></h3>
+                                        <div class="bg-white dark:bg-zinc-800 p-3 rounded border-0 ring-1 ring-zinc-200 dark:ring-zinc-700/80 mb-2">
+                                            <pre class="text-sm text-zinc-600 dark:text-zinc-300 whitespace-pre-wrap" x-text="prompt.text"></pre>
                                         </div>
                                         <div class="flex justify-end">
-                                            <button @click="copyPrompt(prompt.text)" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
+                                            <button @click="copyPrompt(prompt.text)" class="inline-flex items-center px-3 py-1.5 border border-zinc-300 dark:border-zinc-700 text-xs font-medium rounded shadow-sm text-zinc-700 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 focus:outline-none">
                                                 <i class="fas fa-copy mr-1.5"></i> Copy
                                             </button>
                                         </div>
@@ -322,13 +514,13 @@
                             <!-- Tool usage prompts -->
                             <div x-show="promptCategory === 'tools'">
                                 <template x-for="(prompt, index) in prompts.tools" :key="index">
-                                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
-                                        <h3 class="text-md font-medium text-gray-700 mb-2" x-text="prompt.title"></h3>
-                                        <div class="bg-white p-3 rounded border border-gray-200 mb-2">
-                                            <pre class="text-sm text-gray-600 whitespace-pre-wrap" x-text="prompt.text"></pre>
+                                    <div class="bg-zinc-50 dark:bg-zinc-800/50 p-4 rounded-lg mb-4 ring-1 ring-zinc-200 dark:ring-zinc-700/80">
+                                        <h3 class="text-md font-medium text-zinc-700 dark:text-zinc-300 mb-2" x-text="prompt.title"></h3>
+                                        <div class="bg-white dark:bg-zinc-800 p-3 rounded border-0 ring-1 ring-zinc-200 dark:ring-zinc-700/80 mb-2">
+                                            <pre class="text-sm text-zinc-600 dark:text-zinc-300 whitespace-pre-wrap" x-text="prompt.text"></pre>
                                         </div>
                                         <div class="flex justify-end">
-                                            <button @click="copyPrompt(prompt.text)" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
+                                            <button @click="copyPrompt(prompt.text)" class="inline-flex items-center px-3 py-1.5 border border-zinc-300 dark:border-zinc-700 text-xs font-medium rounded shadow-sm text-zinc-700 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 focus:outline-none">
                                                 <i class="fas fa-copy mr-1.5"></i> Copy
                                             </button>
                                         </div>
@@ -339,13 +531,13 @@
                             <!-- GitHub integration prompts -->
                             <div x-show="promptCategory === 'github'">
                                 <template x-for="(prompt, index) in prompts.github" :key="index">
-                                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
-                                        <h3 class="text-md font-medium text-gray-700 mb-2" x-text="prompt.title"></h3>
-                                        <div class="bg-white p-3 rounded border border-gray-200 mb-2">
-                                            <pre class="text-sm text-gray-600 whitespace-pre-wrap" x-text="prompt.text"></pre>
+                                    <div class="bg-zinc-50 dark:bg-zinc-800/50 p-4 rounded-lg mb-4 ring-1 ring-zinc-200 dark:ring-zinc-700/80">
+                                        <h3 class="text-md font-medium text-zinc-700 dark:text-zinc-300 mb-2" x-text="prompt.title"></h3>
+                                        <div class="bg-white dark:bg-zinc-800 p-3 rounded border-0 ring-1 ring-zinc-200 dark:ring-zinc-700/80 mb-2">
+                                            <pre class="text-sm text-zinc-600 dark:text-zinc-300 whitespace-pre-wrap" x-text="prompt.text"></pre>
                                         </div>
                                         <div class="flex justify-end">
-                                            <button @click="copyPrompt(prompt.text)" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
+                                            <button @click="copyPrompt(prompt.text)" class="inline-flex items-center px-3 py-1.5 border border-zinc-300 dark:border-zinc-700 text-xs font-medium rounded shadow-sm text-zinc-700 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 focus:outline-none">
                                                 <i class="fas fa-copy mr-1.5"></i> Copy
                                             </button>
                                         </div>
@@ -356,13 +548,13 @@
                             <!-- Code pattern prompts -->
                             <div x-show="promptCategory === 'code'">
                                 <template x-for="(prompt, index) in prompts.code" :key="index">
-                                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
-                                        <h3 class="text-md font-medium text-gray-700 mb-2" x-text="prompt.title"></h3>
-                                        <div class="bg-white p-3 rounded border border-gray-200 mb-2">
-                                            <pre class="text-sm text-gray-600 whitespace-pre-wrap" x-text="prompt.text"></pre>
+                                    <div class="bg-zinc-50 dark:bg-zinc-800/50 p-4 rounded-lg mb-4 ring-1 ring-zinc-200 dark:ring-zinc-700/80">
+                                        <h3 class="text-md font-medium text-zinc-700 dark:text-zinc-300 mb-2" x-text="prompt.title"></h3>
+                                        <div class="bg-white dark:bg-zinc-800 p-3 rounded border-0 ring-1 ring-zinc-200 dark:ring-zinc-700/80 mb-2">
+                                            <pre class="text-sm text-zinc-600 dark:text-zinc-300 whitespace-pre-wrap" x-text="prompt.text"></pre>
                                         </div>
                                         <div class="flex justify-end">
-                                            <button @click="copyPrompt(prompt.text)" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
+                                            <button @click="copyPrompt(prompt.text)" class="inline-flex items-center px-3 py-1.5 border border-zinc-300 dark:border-zinc-700 text-xs font-medium rounded shadow-sm text-zinc-700 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 focus:outline-none">
                                                 <i class="fas fa-copy mr-1.5"></i> Copy
                                             </button>
                                         </div>
@@ -375,30 +567,30 @@
                 
                 <!-- Help Tab Content -->
                 <div x-show="activeTab === 'help'" class="mt-6">
-                    <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <div class="bento-card overflow-hidden">
                         <div class="p-6">
-                            <h2 class="text-lg font-medium text-gray-900 mb-4">Help & Documentation</h2>
+                            <h2 class="text-lg font-medium text-zinc-900 dark:text-white mb-4">Help & Documentation</h2>
                             
                             <!-- Help tabs -->
-                            <div class="border-b border-gray-200 mb-4">
+                            <div class="border-b border-zinc-200 dark:border-zinc-700 mb-4">
                                 <nav class="flex -mb-px space-x-4">
-                                    <button @click="helpSection = 'getting-started'" :class="{'border-primary-500 text-primary-600 pb-3 border-b-2': helpSection === 'getting-started', 'text-gray-500 hover:text-gray-700 pb-3': helpSection !== 'getting-started'}" class="font-medium text-sm">
+                                    <button @click="helpSection = 'getting-started'" :class="{'text-emerald-600 dark:text-emerald-400 pb-3 border-b-2 border-emerald-600 dark:border-emerald-400': helpSection === 'getting-started', 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 pb-3': helpSection !== 'getting-started'}" class="font-medium text-sm">
                                         Getting Started
                                     </button>
-                                    <button @click="helpSection = 'tools'" :class="{'border-primary-500 text-primary-600 pb-3 border-b-2': helpSection === 'tools', 'text-gray-500 hover:text-gray-700 pb-3': helpSection !== 'tools'}" class="font-medium text-sm">
+                                    <button @click="helpSection = 'tools'" :class="{'text-emerald-600 dark:text-emerald-400 pb-3 border-b-2 border-emerald-600 dark:border-emerald-400': helpSection === 'tools', 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 pb-3': helpSection !== 'tools'}" class="font-medium text-sm">
                                         Available Tools
                                     </button>
-                                    <button @click="helpSection = 'faq'" :class="{'border-primary-500 text-primary-600 pb-3 border-b-2': helpSection === 'faq', 'text-gray-500 hover:text-gray-700 pb-3': helpSection !== 'faq'}" class="font-medium text-sm">
+                                    <button @click="helpSection = 'faq'" :class="{'text-emerald-600 dark:text-emerald-400 pb-3 border-b-2 border-emerald-600 dark:border-emerald-400': helpSection === 'faq', 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 pb-3': helpSection !== 'faq'}" class="font-medium text-sm">
                                         FAQ
                                     </button>
-                                    <button @click="helpSection = 'troubleshooting'" :class="{'border-primary-500 text-primary-600 pb-3 border-b-2': helpSection === 'troubleshooting', 'text-gray-500 hover:text-gray-700 pb-3': helpSection !== 'troubleshooting'}" class="font-medium text-sm">
+                                    <button @click="helpSection = 'troubleshooting'" :class="{'text-emerald-600 dark:text-emerald-400 pb-3 border-b-2 border-emerald-600 dark:border-emerald-400': helpSection === 'troubleshooting', 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 pb-3': helpSection !== 'troubleshooting'}" class="font-medium text-sm">
                                         Troubleshooting
                                     </button>
                                 </nav>
                             </div>
                             
                             <!-- Getting Started content -->
-                            <div x-show="helpSection === 'getting-started'" class="prose prose-sm prose-primary max-w-none">
+                            <div x-show="helpSection === 'getting-started'" class="prose prose-sm prose-emerald max-w-none dark:prose-invert">
                                 <h3>Welcome to NexusHub!</h3>
                                 <p>NexusHub is a centralized MCP (Model Context Protocol) server that provides various tools and capabilities to Claude Code and other AI assistants.</p>
                                 
@@ -419,7 +611,7 @@
                             </div>
                             
                             <!-- Tools content -->
-                            <div x-show="helpSection === 'tools'" class="prose prose-sm prose-primary max-w-none">
+                            <div x-show="helpSection === 'tools'" class="prose prose-sm prose-emerald max-w-none dark:prose-invert">
                                 <h3>Available Tools</h3>
                                 <p>NexusHub provides the following tools to Claude Code:</p>
                                 
@@ -466,7 +658,7 @@
                             </div>
                             
                             <!-- FAQ content -->
-                            <div x-show="helpSection === 'faq'" class="prose prose-sm prose-primary max-w-none">
+                            <div x-show="helpSection === 'faq'" class="prose prose-sm prose-emerald max-w-none dark:prose-invert">
                                 <h3>Frequently Asked Questions</h3>
                                 
                                 <div class="space-y-4">
@@ -498,7 +690,7 @@
                             </div>
                             
                             <!-- Troubleshooting content -->
-                            <div x-show="helpSection === 'troubleshooting'" class="prose prose-sm prose-primary max-w-none">
+                            <div x-show="helpSection === 'troubleshooting'" class="prose prose-sm prose-emerald max-w-none dark:prose-invert">
                                 <h3>Troubleshooting</h3>
                                 
                                 <h4>Service Connection Issues</h4>
@@ -540,33 +732,33 @@
             </div>
         </main>
         
-        <!-- Footer -->
-        <footer class="bg-white border-t border-gray-200 py-6">
-            <div class="container mx-auto px-4">
+        <!-- Footer - Protocol Style -->
+        <footer class="bg-zinc-50 dark:bg-zinc-800 border-t border-zinc-200 dark:border-zinc-700 py-6 ring-1 ring-zinc-200 dark:ring-zinc-700/80">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex flex-col md:flex-row justify-between items-center">
                     <div class="mb-4 md:mb-0">
-                        <p class="text-sm text-gray-500">&copy; 2025 NexusHub. All rights reserved.</p>
+                        <p class="text-xs text-zinc-500 dark:text-zinc-400">&copy; 2025 NexusHub. All rights reserved.</p>
                     </div>
                     
-                    <div class="flex space-x-4">
-                        <a href="https://github.com/your-username/nexushub" class="text-gray-400 hover:text-gray-500" target="_blank">
+                    <div class="flex space-x-6">
+                        <a href="https://github.com/webdevtodayjason/NexusHub" class="text-zinc-400 hover:text-zinc-500 dark:text-zinc-500 dark:hover:text-zinc-400 text-sm" target="_blank">
                             <i class="fab fa-github text-lg"></i>
-                            <span class="ml-1 text-sm">GitHub Repository</span>
+                            <span class="ml-1 text-xs">GitHub Repository</span>
                         </a>
-                        <a href="https://github.com/your-username/nexushub/issues" class="text-gray-400 hover:text-gray-500" target="_blank">
+                        <a href="https://github.com/webdevtodayjason/NexusHub/issues" class="text-zinc-400 hover:text-zinc-500 dark:text-zinc-500 dark:hover:text-zinc-400 text-sm" target="_blank">
                             <i class="fas fa-bug text-lg"></i>
-                            <span class="ml-1 text-sm">Report Issues</span>
+                            <span class="ml-1 text-xs">Report Issues</span>
                         </a>
-                        <a href="https://github.com/your-username/nexushub/wiki" class="text-gray-400 hover:text-gray-500" target="_blank">
+                        <a href="https://github.com/webdevtodayjason/NexusHub/wiki" class="text-zinc-400 hover:text-zinc-500 dark:text-zinc-500 dark:hover:text-zinc-400 text-sm" target="_blank">
                             <i class="fas fa-book text-lg"></i>
-                            <span class="ml-1 text-sm">Documentation</span>
+                            <span class="ml-1 text-xs">Documentation</span>
                         </a>
                     </div>
                 </div>
             </div>
         </footer>
         
-        <!-- Toast notifications -->
+        <!-- Toast notifications - Protocol Style -->
         <div x-show="toast.visible" 
              @click="toast.visible = false"
              x-transition:enter="transition ease-out duration-300"
@@ -575,18 +767,18 @@
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="opacity-100 transform translate-y-0"
              x-transition:leave-end="opacity-0 transform translate-y-2"
-             class="fixed bottom-4 right-4 px-4 py-3 rounded-lg shadow-lg"
+             class="fixed bottom-4 right-4 px-4 py-3 rounded-lg shadow-lg ring-1"
              :class="{
-                'bg-green-50 text-green-800 border border-green-100': toast.type === 'success',
-                'bg-red-50 text-red-800 border border-red-100': toast.type === 'error',
-                'bg-blue-50 text-blue-800 border border-blue-100': toast.type === 'info'
+                'bg-emerald-50 text-emerald-800 border-0 ring-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:ring-emerald-800/50': toast.type === 'success',
+                'bg-red-50 text-red-800 border-0 ring-red-200 dark:bg-red-900/30 dark:text-red-300 dark:ring-red-800/50': toast.type === 'error',
+                'bg-blue-50 text-blue-800 border-0 ring-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:ring-blue-800/50': toast.type === 'info'
              }">
             <div class="flex items-center">
                 <i class="mr-2"
                    :class="{
-                      'fas fa-check-circle text-green-500': toast.type === 'success',
-                      'fas fa-exclamation-circle text-red-500': toast.type === 'error',
-                      'fas fa-info-circle text-blue-500': toast.type === 'info'
+                      'fas fa-check-circle text-emerald-500 dark:text-emerald-400': toast.type === 'success',
+                      'fas fa-exclamation-circle text-red-500 dark:text-red-400': toast.type === 'error',
+                      'fas fa-info-circle text-blue-500 dark:text-blue-400': toast.type === 'info'
                    }"></i>
                 <span x-text="toast.message"></span>
             </div>
@@ -602,6 +794,7 @@
                 serverStatus: 'checking',
                 dragover: false,
                 documentUrl: '',
+                darkMode: localStorage.getItem('darkMode') !== 'false',
                 
                 serviceStatus: {
                     nexushub: 'checking',
@@ -697,12 +890,32 @@
                 },
                 
                 init() {
+                    // Apply dark mode initially
+                    if (this.darkMode) {
+                        document.documentElement.classList.add('dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                    }
+                    
                     this.checkServerStatus();
                     this.loadApiKeys();
                     this.loadVectorDocuments();
                     
                     // Initialize services check
                     this.checkServicesStatus();
+                },
+                
+                toggleDarkMode() {
+                    this.darkMode = !this.darkMode;
+                    localStorage.setItem('darkMode', this.darkMode);
+                    
+                    if (this.darkMode) {
+                        document.documentElement.classList.add('dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                    }
+                    
+                    this.showToast('info', this.darkMode ? 'Dark mode enabled' : 'Light mode enabled');
                 },
                 
                 checkServerStatus() {

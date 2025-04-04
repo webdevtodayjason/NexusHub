@@ -84,6 +84,7 @@ docker-compose.override.yml
 .vscode/
 .idea/
 *.sublime-workspace
+tailwind-plus-protocol-template/
 
 # Keep these files
 !.gitkeep

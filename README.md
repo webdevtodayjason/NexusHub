@@ -31,7 +31,7 @@
 ## ✨ Features
 
 - **📡 Dual Interface** - Supports both HTTP and stdio MCP protocols
-- **💅 Modern Dashboard** - Beautiful Tailwind CSS admin interface with dark mode support
+- **💅 Modern Dashboard** - Beautiful Protocol design system admin interface with dark mode by default
 - **🔌 Integrated Services** - Combines multiple MCP servers (Memory, GitHub, Brave Search)
 - **🔍 Vector Database** - Document ingestion and semantic search capabilities
 - **🔑 API Management** - Securely manage API keys and service configurations
@@ -43,7 +43,7 @@
   <br>
   <img src="https://raw.githubusercontent.com/webdevtodayjason/NexusHub/main/public/dashboard-screenshot.png" alt="NexusHub Dashboard" width="800" />
   <br>
-  <em>The elegant NexusHub dashboard interface</em>
+  <em>The elegant NexusHub dashboard interface with Protocol design system</em>
   <br>
 </div>
 
@@ -284,7 +284,8 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 - [Claude AI](https://claude.ai/) - For the amazing AI capabilities
 - [Model Context Protocol](https://github.com/anthropics/anthropic-tools) - For the protocol specification
-- [Tailwind CSS](https://tailwindcss.com/) - For the beautiful UI components
+- [Protocol Design System](https://protocol.tailwindui.com/) - For the modern UI design language
+- [Tailwind CSS](https://tailwindcss.com/) - For the utility-first CSS framework
 
 ---
 
