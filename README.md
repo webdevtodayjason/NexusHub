@@ -342,6 +342,10 @@ npm test -- --grep "API Keys"
 - [Tool Development Guide](./docs/TOOL_DEVELOPMENT_GUIDE.md) - Comprehensive guide to creating tools
 - [AI Tool Creation Prompts](./docs/AI_TOOL_CREATION_PROMPTS.md) - Optimized prompts for AI-assisted tool creation
 
+### Integration Guides
+- [Claude Desktop Integration](./docs/CLAUDE_DESKTOP_INTEGRATION.md) - Connect NexusHub to Claude Desktop
+- [Claude CLI Integration](./docs/CLAUDE_CLI_INTEGRATION.md) - Use NexusHub with Claude CLI
+
 ### MCP Resources
 - [Model Context Protocol Official Site](https://modelcontextprotocol.io)
 - [MCP Quickstart for Claude Desktop Users](https://modelcontextprotocol.io/quickstart/user#for-claude-desktop-users)
