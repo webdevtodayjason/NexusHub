@@ -339,6 +339,9 @@
                     <button @click="activeTab = 'api-keys'" :class="{'text-emerald-600 dark:text-emerald-400 pb-4 -mb-px border-b-2 border-emerald-600 dark:border-emerald-400': activeTab === 'api-keys', 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 pb-4': activeTab !== 'api-keys'}" class="font-medium text-sm">
                         API Keys
                     </button>
+                    <button @click="activeTab = 'nexus-tools'" :class="{'text-emerald-600 dark:text-emerald-400 pb-4 -mb-px border-b-2 border-emerald-600 dark:border-emerald-400': activeTab === 'nexus-tools', 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 pb-4': activeTab !== 'nexus-tools'}" class="font-medium text-sm">
+                        NexusHub Tools
+                    </button>
                     <button @click="activeTab = 'vector-db'" :class="{'text-emerald-600 dark:text-emerald-400 pb-4 -mb-px border-b-2 border-emerald-600 dark:border-emerald-400': activeTab === 'vector-db', 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 pb-4': activeTab !== 'vector-db'}" class="font-medium text-sm">
                         Vector Database
                     </button>
@@ -349,6 +352,177 @@
                         Help
                     </button>
                 </nav>
+                
+                <!-- NexusHub Tools Tab Content -->
+                <div x-show="activeTab === 'nexus-tools'" class="mt-6">
+                    <div class="bento-card overflow-hidden">
+                        <div class="p-6">
+                            <h2 class="text-lg font-medium text-zinc-900 dark:text-white mb-4">NexusHub MCP Tools</h2>
+                            
+                            <div class="space-y-6">
+                                <!-- Filesystem Tools Section -->
+                                <div class="bg-zinc-50 dark:bg-zinc-800/50 rounded-lg p-4 ring-1 ring-zinc-200 dark:ring-zinc-700/80">
+                                    <h3 class="text-md font-medium text-zinc-700 dark:text-zinc-200 mb-3">Filesystem Tools</h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div class="bg-white dark:bg-zinc-800 p-3 rounded-lg shadow-sm ring-1 ring-zinc-200 dark:ring-zinc-700/50">
+                                            <div class="flex items-center mb-2">
+                                                <svg class="h-5 w-5 text-emerald-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                                                </svg>
+                                                <h4 class="font-medium text-zinc-700 dark:text-zinc-200">fs_list_files</h4>
+                                            </div>
+                                            <p class="text-xs text-zinc-500 dark:text-zinc-400">Lists files and directories in a specified path with optional filtering.</p>
+                                        </div>
+                                        <div class="bg-white dark:bg-zinc-800 p-3 rounded-lg shadow-sm ring-1 ring-zinc-200 dark:ring-zinc-700/50">
+                                            <div class="flex items-center mb-2">
+                                                <svg class="h-5 w-5 text-emerald-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
+                                                <h4 class="font-medium text-zinc-700 dark:text-zinc-200">fs_read_file</h4>
+                                            </div>
+                                            <p class="text-xs text-zinc-500 dark:text-zinc-400">Reads and returns the content of a file from the filesystem.</p>
+                                        </div>
+                                        <div class="bg-white dark:bg-zinc-800 p-3 rounded-lg shadow-sm ring-1 ring-zinc-200 dark:ring-zinc-700/50">
+                                            <div class="flex items-center mb-2">
+                                                <svg class="h-5 w-5 text-emerald-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                </svg>
+                                                <h4 class="font-medium text-zinc-700 dark:text-zinc-200">fs_write_file</h4>
+                                            </div>
+                                            <p class="text-xs text-zinc-500 dark:text-zinc-400">Writes content to a file, creating it if it doesn't exist.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Database Tools Section -->
+                                <div class="bg-zinc-50 dark:bg-zinc-800/50 rounded-lg p-4 ring-1 ring-zinc-200 dark:ring-zinc-700/80">
+                                    <h3 class="text-md font-medium text-zinc-700 dark:text-zinc-200 mb-3">Database Tools</h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="bg-white dark:bg-zinc-800 p-3 rounded-lg shadow-sm ring-1 ring-zinc-200 dark:ring-zinc-700/50">
+                                            <div class="flex items-center mb-2">
+                                                <svg class="h-5 w-5 text-emerald-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                                                </svg>
+                                                <h4 class="font-medium text-zinc-700 dark:text-zinc-200">db_execute_query</h4>
+                                            </div>
+                                            <p class="text-xs text-zinc-500 dark:text-zinc-400">Executes a read-only SQL query and returns the results.</p>
+                                        </div>
+                                        <div class="bg-white dark:bg-zinc-800 p-3 rounded-lg shadow-sm ring-1 ring-zinc-200 dark:ring-zinc-700/50">
+                                            <div class="flex items-center mb-2">
+                                                <svg class="h-5 w-5 text-emerald-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                                                </svg>
+                                                <h4 class="font-medium text-zinc-700 dark:text-zinc-200">db_list_tables</h4>
+                                            </div>
+                                            <p class="text-xs text-zinc-500 dark:text-zinc-400">Lists all tables available in the database.</p>
+                                        </div>
+                                        <div class="bg-white dark:bg-zinc-800 p-3 rounded-lg shadow-sm ring-1 ring-zinc-200 dark:ring-zinc-700/50">
+                                            <div class="flex items-center mb-2">
+                                                <svg class="h-5 w-5 text-emerald-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                <h4 class="font-medium text-zinc-700 dark:text-zinc-200">db_describe_table</h4>
+                                            </div>
+                                            <p class="text-xs text-zinc-500 dark:text-zinc-400">Returns the schema information for a specified table.</p>
+                                        </div>
+                                        <div class="bg-white dark:bg-zinc-800 p-3 rounded-lg shadow-sm ring-1 ring-zinc-200 dark:ring-zinc-700/50">
+                                            <div class="flex items-center mb-2">
+                                                <svg class="h-5 w-5 text-emerald-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                <h4 class="font-medium text-zinc-700 dark:text-zinc-200">db_insert_data</h4>
+                                            </div>
+                                            <p class="text-xs text-zinc-500 dark:text-zinc-400">Inserts data into a specified database table.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Docker Tools Section -->
+                                <div class="bg-zinc-50 dark:bg-zinc-800/50 rounded-lg p-4 ring-1 ring-zinc-200 dark:ring-zinc-700/80">
+                                    <h3 class="text-md font-medium text-zinc-700 dark:text-zinc-200 mb-3">Docker Tools</h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="bg-white dark:bg-zinc-800 p-3 rounded-lg shadow-sm ring-1 ring-zinc-200 dark:ring-zinc-700/50">
+                                            <div class="flex items-center mb-2">
+                                                <svg class="h-5 w-5 text-emerald-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
+                                                </svg>
+                                                <h4 class="font-medium text-zinc-700 dark:text-zinc-200">docker_list_containers</h4>
+                                            </div>
+                                            <p class="text-xs text-zinc-500 dark:text-zinc-400">Lists all Docker containers with their status information.</p>
+                                        </div>
+                                        <div class="bg-white dark:bg-zinc-800 p-3 rounded-lg shadow-sm ring-1 ring-zinc-200 dark:ring-zinc-700/50">
+                                            <div class="flex items-center mb-2">
+                                                <svg class="h-5 w-5 text-emerald-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                <h4 class="font-medium text-zinc-700 dark:text-zinc-200">docker_start_container</h4>
+                                            </div>
+                                            <p class="text-xs text-zinc-500 dark:text-zinc-400">Starts a stopped Docker container by name or ID.</p>
+                                        </div>
+                                        <div class="bg-white dark:bg-zinc-800 p-3 rounded-lg shadow-sm ring-1 ring-zinc-200 dark:ring-zinc-700/50">
+                                            <div class="flex items-center mb-2">
+                                                <svg class="h-5 w-5 text-emerald-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+                                                </svg>
+                                                <h4 class="font-medium text-zinc-700 dark:text-zinc-200">docker_stop_container</h4>
+                                            </div>
+                                            <p class="text-xs text-zinc-500 dark:text-zinc-400">Stops a running Docker container by name or ID.</p>
+                                        </div>
+                                        <div class="bg-white dark:bg-zinc-800 p-3 rounded-lg shadow-sm ring-1 ring-zinc-200 dark:ring-zinc-700/50">
+                                            <div class="flex items-center mb-2">
+                                                <svg class="h-5 w-5 text-emerald-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
+                                                <h4 class="font-medium text-zinc-700 dark:text-zinc-200">docker_get_container_logs</h4>
+                                            </div>
+                                            <p class="text-xs text-zinc-500 dark:text-zinc-400">Retrieves the logs from a Docker container with options for filtering.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Vector Tools Section -->
+                                <div class="bg-zinc-50 dark:bg-zinc-800/50 rounded-lg p-4 ring-1 ring-zinc-200 dark:ring-zinc-700/80">
+                                    <h3 class="text-md font-medium text-zinc-700 dark:text-zinc-200 mb-3">Vector & Search Tools</h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div class="bg-white dark:bg-zinc-800 p-3 rounded-lg shadow-sm ring-1 ring-zinc-200 dark:ring-zinc-700/50">
+                                            <div class="flex items-center mb-2">
+                                                <svg class="h-5 w-5 text-emerald-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                                </svg>
+                                                <h4 class="font-medium text-zinc-700 dark:text-zinc-200">ingest_docs</h4>
+                                            </div>
+                                            <p class="text-xs text-zinc-500 dark:text-zinc-400">Ingests documents into the vector database for semantic search.</p>
+                                        </div>
+                                        <div class="bg-white dark:bg-zinc-800 p-3 rounded-lg shadow-sm ring-1 ring-zinc-200 dark:ring-zinc-700/50">
+                                            <div class="flex items-center mb-2">
+                                                <svg class="h-5 w-5 text-emerald-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                                </svg>
+                                                <h4 class="font-medium text-zinc-700 dark:text-zinc-200">vector_search</h4>
+                                            </div>
+                                            <p class="text-xs text-zinc-500 dark:text-zinc-400">Performs semantic search over ingested documents.</p>
+                                        </div>
+                                        <div class="bg-white dark:bg-zinc-800 p-3 rounded-lg shadow-sm ring-1 ring-zinc-200 dark:ring-zinc-700/50">
+                                            <div class="flex items-center mb-2">
+                                                <svg class="h-5 w-5 text-emerald-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                <h4 class="font-medium text-zinc-700 dark:text-zinc-200">serper_search</h4>
+                                            </div>
+                                            <p class="text-xs text-zinc-500 dark:text-zinc-400">Performs web search via the Serper API with options for filtering.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-6">
+                                <p class="text-sm text-zinc-500 dark:text-zinc-400">All of these tools are available directly through the NexusHub MCP server. Use the Help tab for more detailed information about each tool's parameters and usage.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 
                 <!-- API Keys Tab Content -->
                 <div x-show="activeTab === 'api-keys'" class="mt-6">
@@ -788,7 +962,7 @@
     <script>
         function dashboard() {
             return {
-                activeTab: 'api-keys',
+                activeTab: 'nexus-tools',
                 helpSection: 'getting-started',
                 promptCategory: 'general',
                 serverStatus: 'checking',
