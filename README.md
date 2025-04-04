@@ -126,7 +126,11 @@ NexusHub provides the following tools to Claude AI:
 
 ### Configuration for Claude Desktop
 
-Add the following to your `claude_desktop_config.json`:
+NexusHub supports two different integration methods with Claude Desktop:
+
+#### 1. HTTP Mode
+
+This mode connects to NexusHub via HTTP endpoints. Add to your `claude_desktop_config.json`:
 
 ```json
 {
@@ -136,31 +140,74 @@ Add the following to your `claude_desktop_config.json`:
       "description": "Centralized MCP server with multiple capabilities",
       "url": "http://localhost:8001/mcp",
       "enabled": true
-    },
-    "brave-search": {
-      "name": "Brave Search MCP",
-      "description": "Web search capabilities",
-      "command": "docker",
-      "args": ["exec", "-i", "mcp_brave_search", "node", "dist/index.js"],
-      "enabled": true
-    },
-    "github": {
-      "name": "GitHub MCP",
-      "description": "GitHub repository integration",
-      "command": "docker",
-      "args": ["exec", "-i", "mcp_github", "node", "dist/index.js"],
-      "enabled": true
-    },
-    "memory": {
-      "name": "Memory MCP",
-      "description": "Knowledge graph capability",
-      "command": "docker",
-      "args": ["exec", "-i", "mcp_memory", "node", "dist/index.js"],
-      "enabled": true
     }
   }
 }
 ```
+
+#### 2. STDIO Mode (Recommended)
+
+This mode uses direct process communication for better performance and reliability. It requires the NexusHub code to be available locally:
+
+1. **Prepare the wrapper scripts:**
+   ```bash
+   # Make the wrapper script executable
+   chmod +x /path/to/nexushub/nexushub-mcp.sh
+   chmod +x /path/to/nexushub/src/mcp/adapters/stdio-wrapper.js
+   chmod +x /path/to/nexushub/src/mcp/stdio-adapter.js
+   ```
+
+2. **Add to your `claude_desktop_config.json`:**
+   ```json
+   {
+     "mcpServers": {
+       "nexushub": {
+         "name": "NexusHub MCP Server",
+         "description": "Centralized MCP server with multiple capabilities",
+         "command": "/path/to/nexushub/nexushub-mcp.sh",
+         "enabled": true
+       },
+       "brave-search": {
+         "name": "Brave Search MCP",
+         "description": "Provides web search capabilities via Brave Search API.",
+         "command": "docker",
+         "args": ["exec", "-i", "mcp_brave_search", "node", "dist/index.js"],
+         "enabled": true
+       },
+       "github": {
+         "name": "GitHub MCP",
+         "description": "Provides GitHub repository interaction.",
+         "command": "docker",
+         "args": ["exec", "-i", "mcp_github", "node", "dist/index.js"],
+         "enabled": true
+       },
+       "memory": {
+         "name": "Memory MCP",
+         "description": "Persistent knowledge graph memory.",
+         "command": "docker",
+         "args": ["exec", "-i", "mcp_memory", "node", "dist/index.js"],
+         "enabled": true
+       }
+     }
+   }
+   ```
+
+**Note:** Replace `/path/to/nexushub` with your actual NexusHub installation path.
+
+#### Docker Containers
+
+Make sure all Docker containers are running before starting Claude Desktop:
+
+```bash
+cd /path/to/nexushub
+docker-compose up -d
+```
+
+This will start all required MCP servers:
+- NexusHub (primary server with filesystem, database, Docker tools)
+- Brave Search MCP (web search capabilities)
+- GitHub MCP (repository interaction)
+- Memory MCP (knowledge graph/persistent memory)
 
 ## 💡 Example Usage
 
@@ -258,7 +305,47 @@ npm test
 npm test -- --grep "API Keys"
 ```
 
+## 🔧 Troubleshooting
+
+### Claude Desktop Integration Issues
+
+1. **"Unexpected token" errors when starting Claude Desktop:**
+   - Make sure your wrapper scripts have proper permissions: `chmod +x nexushub-mcp.sh`
+   - Verify that all scripts filter non-JSON output correctly 
+   - Check log files in `/tmp/nexushub-debug-*.log` for details
+
+2. **MCP server not loading or tools not appearing:**
+   - Ensure Docker containers are running: `docker ps | grep mcp`
+   - Check container logs: `docker logs mcp_brave_search`
+   - Verify Claude Desktop configuration has the correct paths/commands
+   - Try restarting Claude Desktop after making changes
+
+3. **Docker container issues:**
+   - Clear Docker logs if they get too large: `docker system prune`
+   - Restart containers: `docker-compose restart`
+   - Check for port conflicts: `lsof -i :8001`
+
+### Common Error Messages
+
+| Error | Solution |
+|-------|----------|
+| "Method not found" | The MCP server doesn't support this method. Check if you're using the correct tool name. |
+| "Socket hang up" | Connection issue. Check if the MCP server is running. |
+| "ENOENT" | File or directory not found. Check paths in your configuration. |
+| "Permission denied" | File permission issue. Check script permissions. |
+| "Unexpected token" | JSON parsing error. Check the MCP server's stdout output. |
+
 ## 📚 Documentation
+
+### Tool Development Guides
+- [Quick Start Guide](./docs/QUICK_START_GUIDE.md) - Get up and running in 5 minutes
+- [Tool Development Guide](./docs/TOOL_DEVELOPMENT_GUIDE.md) - Comprehensive guide to creating tools
+- [AI Tool Creation Prompts](./docs/AI_TOOL_CREATION_PROMPTS.md) - Optimized prompts for AI-assisted tool creation
+
+### MCP Resources
+- [Model Context Protocol Official Site](https://modelcontextprotocol.io)
+- [MCP Quickstart for Claude Desktop Users](https://modelcontextprotocol.io/quickstart/user#for-claude-desktop-users)
+- [Claude Code Documentation](https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview)
 
 For complete documentation, visit the [NexusHub Wiki](https://github.com/webdevtodayjason/NexusHub/wiki).
 

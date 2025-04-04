@@ -23,7 +23,10 @@ NexusHub is a unified MCP (Model Context Protocol) server that provides AI assis
 │   ├── dashboard/         # Dashboard routes and controllers
 │   ├── database/          # Database connection and models
 │   ├── mcp/               # MCP server implementation
+│   │   ├── adapters/      # MCP protocol adapters
+│   │   │   └── stdio-wrapper.js # Clean JSON protocol wrapper
 │   │   ├── http-routes.js # HTTP-based MCP endpoints
+│   │   ├── stdio-adapter.js # STDIO-based MCP adapter
 │   │   ├── stdio-server.js # STDIO-based MCP server
 │   │   └── tools/         # Tool implementations
 │   │       ├── index.js   # Tool registry
@@ -42,6 +45,7 @@ NexusHub is a unified MCP (Model Context Protocol) server that provides AI assis
 ├── .env.example           # Example environment variables
 ├── docker-compose.yml     # Docker Compose configuration
 ├── Dockerfile             # Docker build configuration
+├── nexushub-mcp.sh        # Wrapper script for Claude Desktop
 ├── package.json           # Node.js dependencies and scripts
 └── README.md              # Project documentation
 ```
@@ -268,12 +272,46 @@ export async function handleToolCall(toolName, params) {
        "nexushub": {
          "name": "NexusHub MCP Server",
          "description": "Centralized MCP server with multiple capabilities",
-         "url": "http://localhost:8001/mcp",
+         "command": "/path/to/nexushub/nexushub-mcp.sh",
          "enabled": true
        },
-       // Other servers...
+       "brave-search": {
+         "name": "Brave Search MCP",
+         "description": "Provides web search capabilities via Brave Search API.",
+         "command": "docker",
+         "args": ["exec", "-i", "mcp_brave_search", "node", "dist/index.js"],
+         "enabled": true
+       },
+       "github": {
+         "name": "GitHub MCP",
+         "description": "Provides GitHub repository interaction.",
+         "command": "docker",
+         "args": ["exec", "-i", "mcp_github", "node", "dist/index.js"],
+         "enabled": true
+       },
+       "memory": {
+         "name": "Memory MCP",
+         "description": "Persistent knowledge graph memory.",
+         "command": "docker",
+         "args": ["exec", "-i", "mcp_memory", "node", "dist/index.js"],
+         "enabled": true
+       }
      }
    }
+   ```
+
+3. Check STDIO adapter logs for troubleshooting:
+   ```bash
+   tail -f /tmp/nexushub-debug-*.log
+   ```
+
+4. Test wrapper scripts manually:
+   ```bash
+   # Test the stdio adapter directly
+   echo '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}' | node src/mcp/stdio-adapter.js
+   
+   # Test through the wrapper
+   echo '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}' | ./nexushub-mcp.sh
    ```
 
 ### Docker Container Issues
@@ -329,6 +367,24 @@ CORS can be configured via the `CORS_ORIGINS` environment variable to control wh
 
 ## Troubleshooting
 
+### STDIO Adapter Architecture
+
+NexusHub implements a multi-layer approach to ensure reliable communication with Claude Desktop:
+
+1. **nexushub-mcp.sh**: Simple wrapper script that launches the Node.js STDIO wrapper
+2. **stdio-wrapper.js**: Node.js wrapper that:
+   - Spawns the MCP adapter as a child process
+   - Captures all output from the adapter
+   - Validates JSON before sending to stdout
+   - Logs non-JSON output to debug files
+3. **stdio-adapter.js**: Core MCP implementation that:
+   - Redirects all console methods to stderr
+   - Handles uncaught exceptions
+   - Properly implements the MCP protocol
+   - Ensures only valid JSON is written to stdout
+
+This layered approach prevents "Unexpected token" errors in Claude Desktop by ensuring only valid JSON responses are sent to stdout.
+
 ### "Method not found" Errors
 
 This typically indicates a mismatch between the MCP client and server protocol versions or an unsupported method.
@@ -344,6 +400,14 @@ If Docker operations fail, ensure the server has proper access to the Docker soc
 ### Vector Search Problems
 
 Verify that the vector database has been properly initialized and that documents have been ingested.
+
+### "Unexpected token" Errors
+
+If you see "Unexpected token" errors in Claude Desktop:
+- Check the wrapper scripts are correctly configured and executable
+- Look at the debug logs in `/tmp/nexushub-debug-*.log`
+- Ensure only valid JSON is being sent to stdout
+- Double-check the wrapper is capturing all Node.js startup messages
 
 ## MCP Protocol Notes
 
