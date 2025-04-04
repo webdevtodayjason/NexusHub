@@ -1,0 +1,55 @@
+version: "3.8"
+
+volumes:
+  nexushub_data:
+  claude_memory_data:
+
+services:
+  # Main NexusHub MCP Server
+  nexushub:
+    build:
+      context: .
+    container_name: nexushub_app
+    ports:
+      - "8001:8001"
+    volumes:
+      - nexushub_data:/app/data
+      - ./persistent_data:/app/persistent_data
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - NODE_ENV=development
+      - PORT=8001
+      - BRAVE_API_KEY=${BRAVE_API_KEY}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - SERPER_API_KEY=${SERPER_API_KEY}
+    restart: unless-stopped
+
+  # Brave Search MCP Server
+  brave-search:
+    image: mcp/brave-search
+    container_name: mcp_brave_search
+    environment:
+      - BRAVE_API_KEY=${BRAVE_API_KEY}
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+
+  # GitHub MCP Server
+  github:
+    image: mcp/github
+    container_name: mcp_github
+    environment:
+      - GITHUB_PERSONAL_ACCESS_TOKEN=${GITHUB_TOKEN}
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+
+  # Memory MCP Server
+  memory:
+    image: mcp/memory
+    container_name: mcp_memory
+    volumes:
+      - claude_memory_data:/app/dist
+    restart: unless-stopped
+    stdin_open: true
+    tty: true

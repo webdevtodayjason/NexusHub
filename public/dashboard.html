@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusHub Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            200: '#c7d2fe',
+                            300: '#a5b4fc',
+                            400: '#818cf8',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#312e81',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        [x-cloak] { display: none !important; }
+        
+        .dropzone {
+            border: 2px dashed #6366f1;
+            border-radius: 0.5rem;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .dropzone:hover, .dropzone.active {
+            background-color: #eef2ff;
+            border-color: #4f46e5;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <div x-data="dashboard()" x-cloak>
+        <!-- Header -->
+        <header class="bg-white shadow-sm">
+            <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+                <div class="flex items-center">
+                    <svg class="h-8 w-8 text-primary-600" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                    </svg>
+                    <h1 class="ml-3 text-2xl font-bold text-gray-900">NexusHub</h1>
+                </div>
+                
+                <div>
+                    <span x-show="serverStatus === 'online'" class="flex items-center">
+                        <span class="inline-block h-3 w-3 rounded-full bg-green-500 mr-2"></span>
+                        <span class="text-sm font-medium text-gray-700">Server Online</span>
+                    </span>
+                    <span x-show="serverStatus === 'offline'" class="flex items-center">
+                        <span class="inline-block h-3 w-3 rounded-full bg-red-500 mr-2"></span>
+                        <span class="text-sm font-medium text-gray-700">Server Offline</span>
+                    </span>
+                    <span x-show="serverStatus === 'checking'" class="flex items-center">
+                        <span class="inline-block h-3 w-3 rounded-full bg-yellow-500 mr-2 animate-pulse"></span>
+                        <span class="text-sm font-medium text-gray-700">Checking Status...</span>
+                    </span>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main content -->
+        <main class="container mx-auto px-4 py-8">
+            <!-- Status Cards -->
+            <div class="mb-8">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Service Status</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- NexusHub MCP Server -->
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-md font-medium text-gray-700">NexusHub MCP</h3>
+                            <span x-show="serviceStatus.nexushub === 'online'" class="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Online</span>
+                            <span x-show="serviceStatus.nexushub === 'offline'" class="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">Offline</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-500">Local HTTP Server</span>
+                            <button @click="restartService('nexushub')" class="text-sm text-primary-600 hover:text-primary-800">Restart</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Memory MCP -->
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-md font-medium text-gray-700">Memory MCP</h3>
+                            <span x-show="serviceStatus.memory === 'online'" class="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Online</span>
+                            <span x-show="serviceStatus.memory === 'offline'" class="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">Offline</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-500">Knowledge Graph</span>
+                            <button @click="restartService('memory')" class="text-sm text-primary-600 hover:text-primary-800">Restart</button>
+                        </div>
+                    </div>
+                    
+                    <!-- GitHub MCP -->
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-md font-medium text-gray-700">GitHub MCP</h3>
+                            <span x-show="serviceStatus.github === 'online'" class="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Online</span>
+                            <span x-show="serviceStatus.github === 'offline'" class="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">Offline</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-500">Repository Integration</span>
+                            <button @click="restartService('github')" class="text-sm text-primary-600 hover:text-primary-800">Restart</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Brave Search MCP -->
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-md font-medium text-gray-700">Brave Search MCP</h3>
+                            <span x-show="serviceStatus.brave === 'online'" class="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Online</span>
+                            <span x-show="serviceStatus.brave === 'offline'" class="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">Offline</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-500">Web Search</span>
+                            <button @click="restartService('brave')" class="text-sm text-primary-600 hover:text-primary-800">Restart</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tabs Navigation -->
+            <div class="mb-8">
+                <nav class="flex space-x-4 border-b border-gray-200">
+                    <button @click="activeTab = 'api-keys'" :class="{'border-primary-500 text-primary-600 pb-4 -mb-px border-b-2': activeTab === 'api-keys', 'text-gray-500 hover:text-gray-700 pb-4': activeTab !== 'api-keys'}" class="font-medium text-sm">
+                        API Keys
+                    </button>
+                    <button @click="activeTab = 'vector-db'" :class="{'border-primary-500 text-primary-600 pb-4 -mb-px border-b-2': activeTab === 'vector-db', 'text-gray-500 hover:text-gray-700 pb-4': activeTab !== 'vector-db'}" class="font-medium text-sm">
+                        Vector Database
+                    </button>
+                    <button @click="activeTab = 'prompts'" :class="{'border-primary-500 text-primary-600 pb-4 -mb-px border-b-2': activeTab === 'prompts', 'text-gray-500 hover:text-gray-700 pb-4': activeTab !== 'prompts'}" class="font-medium text-sm">
+                        Prompts
+                    </button>
+                    <button @click="activeTab = 'help'" :class="{'border-primary-500 text-primary-600 pb-4 -mb-px border-b-2': activeTab === 'help', 'text-gray-500 hover:text-gray-700 pb-4': activeTab !== 'help'}" class="font-medium text-sm">
+                        Help
+                    </button>
+                </nav>
+                
+                <!-- API Keys Tab Content -->
+                <div x-show="activeTab === 'api-keys'" class="mt-6">
+                    <div class="bg-white rounded-lg shadow overflow-hidden">
+                        <div class="p-6">
+                            <h2 class="text-lg font-medium text-gray-900 mb-4">API Keys Configuration</h2>
+                            
+                            <div class="space-y-6">
+                                <template x-for="(key, service) in apiKeys" :key="service">
+                                    <div class="bg-gray-50 p-4 rounded-lg">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <h3 class="text-md font-medium text-gray-700" x-text="getServiceName(service)"></h3>
+                                            <span x-show="key" class="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Configured</span>
+                                            <span x-show="!key" class="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">Not Configured</span>
+                                        </div>
+                                        
+                                        <div class="mt-2">
+                                            <label :for="'api-key-' + service" class="block text-sm font-medium text-gray-700 mb-1">API Key</label>
+                                            <div class="flex items-center">
+                                                <input :type="showApiKey[service] ? 'text' : 'password'" :id="'api-key-' + service" x-model="tempApiKeys[service]" class="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3">
+                                                <button @click="showApiKey[service] = !showApiKey[service]" type="button" class="ml-2 p-2 text-gray-400 hover:text-gray-500">
+                                                    <i :class="showApiKey[service] ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mt-3 flex justify-end">
+                                            <button @click="saveApiKey(service)" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                                                Save Key
+                                            </button>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                            
+                            <div class="mt-6">
+                                <button @click="reloadEnvironment" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                                    <i class="fas fa-sync-alt mr-2"></i> Reload Environment
+                                </button>
+                                <p class="mt-2 text-sm text-gray-500">Reload environment variables without restarting the server</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Vector Database Tab Content -->
+                <div x-show="activeTab === 'vector-db'" class="mt-6">
+                    <div class="bg-white rounded-lg shadow overflow-hidden">
+                        <div class="p-6">
+                            <h2 class="text-lg font-medium text-gray-900 mb-4">Vector Database Management</h2>
+                            
+                            <!-- File Upload Section -->
+                            <div class="mb-6">
+                                <h3 class="text-md font-medium text-gray-700 mb-2">Upload Documents</h3>
+                                
+                                <div class="dropzone"
+                                     x-ref="dropzone"
+                                     @dragover.prevent="dragover = true"
+                                     @dragleave.prevent="dragover = false"
+                                     @drop.prevent="handleDrop"
+                                     :class="{'active': dragover}"
+                                     @click="$refs.fileInput.click()">
+                                    <input type="file" x-ref="fileInput" class="hidden" multiple @change="handleFileSelect">
+                                    <i class="fas fa-cloud-upload-alt text-3xl text-primary-500 mb-2"></i>
+                                    <p class="text-sm text-gray-500">Drag and drop files here or click to browse</p>
+                                    <p class="text-xs text-gray-400 mt-1">Supported formats: PDF, DOCX, MD, TXT</p>
+                                </div>
+                                
+                                <!-- URL input -->
+                                <div class="mt-4">
+                                    <label for="document-url" class="block text-sm font-medium text-gray-700 mb-1">Or add from URL</label>
+                                    <div class="flex">
+                                        <input type="text" id="document-url" x-model="documentUrl" placeholder="https://example.com/document.pdf" class="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-l-md py-2 px-3">
+                                        <button @click="ingestFromUrl" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-r-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                                            Add
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Files list -->
+                            <div>
+                                <h3 class="text-md font-medium text-gray-700 mb-2">Ingested Documents</h3>
+                                
+                                <div class="bg-gray-50 rounded-lg p-4" x-show="vectorDocuments.length === 0">
+                                    <p class="text-sm text-gray-500 text-center">No documents have been ingested yet</p>
+                                </div>
+                                
+                                <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg" x-show="vectorDocuments.length > 0">
+                                    <table class="min-w-full divide-y divide-gray-300">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Title</th>
+                                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Source</th>
+                                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Date Added</th>
+                                                <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                                                    <span class="sr-only">Actions</span>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-200 bg-white">
+                                            <template x-for="doc in vectorDocuments" :key="doc.id">
+                                                <tr>
+                                                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6" x-text="doc.title"></td>
+                                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500" x-text="doc.source"></td>
+                                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500" x-text="formatDate(doc.created_at)"></td>
+                                                    <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                                                        <button @click="deleteVectorDocument(doc.id)" class="text-red-600 hover:text-red-900">
+                                                            <i class="fas fa-trash"></i> <span class="sr-only">Delete</span>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Prompts Tab Content -->
+                <div x-show="activeTab === 'prompts'" class="mt-6">
+                    <div class="bg-white rounded-lg shadow overflow-hidden">
+                        <div class="p-6">
+                            <h2 class="text-lg font-medium text-gray-900 mb-4">Prompts for AI Coding</h2>
+                            
+                            <!-- Prompt categories tabs -->
+                            <div class="border-b border-gray-200 mb-4">
+                                <nav class="flex -mb-px space-x-4">
+                                    <button @click="promptCategory = 'general'" :class="{'border-primary-500 text-primary-600 pb-3 border-b-2': promptCategory === 'general', 'text-gray-500 hover:text-gray-700 pb-3': promptCategory !== 'general'}" class="font-medium text-sm">
+                                        General
+                                    </button>
+                                    <button @click="promptCategory = 'tools'" :class="{'border-primary-500 text-primary-600 pb-3 border-b-2': promptCategory === 'tools', 'text-gray-500 hover:text-gray-700 pb-3': promptCategory !== 'tools'}" class="font-medium text-sm">
+                                        Tool Usage
+                                    </button>
+                                    <button @click="promptCategory = 'github'" :class="{'border-primary-500 text-primary-600 pb-3 border-b-2': promptCategory === 'github', 'text-gray-500 hover:text-gray-700 pb-3': promptCategory !== 'github'}" class="font-medium text-sm">
+                                        GitHub Integration
+                                    </button>
+                                    <button @click="promptCategory = 'code'" :class="{'border-primary-500 text-primary-600 pb-3 border-b-2': promptCategory === 'code', 'text-gray-500 hover:text-gray-700 pb-3': promptCategory !== 'code'}" class="font-medium text-sm">
+                                        Code Patterns
+                                    </button>
+                                </nav>
+                            </div>
+                            
+                            <!-- General prompts -->
+                            <div x-show="promptCategory === 'general'">
+                                <template x-for="(prompt, index) in prompts.general" :key="index">
+                                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                                        <h3 class="text-md font-medium text-gray-700 mb-2" x-text="prompt.title"></h3>
+                                        <div class="bg-white p-3 rounded border border-gray-200 mb-2">
+                                            <pre class="text-sm text-gray-600 whitespace-pre-wrap" x-text="prompt.text"></pre>
+                                        </div>
+                                        <div class="flex justify-end">
+                                            <button @click="copyPrompt(prompt.text)" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
+                                                <i class="fas fa-copy mr-1.5"></i> Copy
+                                            </button>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                            
+                            <!-- Tool usage prompts -->
+                            <div x-show="promptCategory === 'tools'">
+                                <template x-for="(prompt, index) in prompts.tools" :key="index">
+                                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                                        <h3 class="text-md font-medium text-gray-700 mb-2" x-text="prompt.title"></h3>
+                                        <div class="bg-white p-3 rounded border border-gray-200 mb-2">
+                                            <pre class="text-sm text-gray-600 whitespace-pre-wrap" x-text="prompt.text"></pre>
+                                        </div>
+                                        <div class="flex justify-end">
+                                            <button @click="copyPrompt(prompt.text)" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
+                                                <i class="fas fa-copy mr-1.5"></i> Copy
+                                            </button>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                            
+                            <!-- GitHub integration prompts -->
+                            <div x-show="promptCategory === 'github'">
+                                <template x-for="(prompt, index) in prompts.github" :key="index">
+                                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                                        <h3 class="text-md font-medium text-gray-700 mb-2" x-text="prompt.title"></h3>
+                                        <div class="bg-white p-3 rounded border border-gray-200 mb-2">
+                                            <pre class="text-sm text-gray-600 whitespace-pre-wrap" x-text="prompt.text"></pre>
+                                        </div>
+                                        <div class="flex justify-end">
+                                            <button @click="copyPrompt(prompt.text)" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
+                                                <i class="fas fa-copy mr-1.5"></i> Copy
+                                            </button>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                            
+                            <!-- Code pattern prompts -->
+                            <div x-show="promptCategory === 'code'">
+                                <template x-for="(prompt, index) in prompts.code" :key="index">
+                                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                                        <h3 class="text-md font-medium text-gray-700 mb-2" x-text="prompt.title"></h3>
+                                        <div class="bg-white p-3 rounded border border-gray-200 mb-2">
+                                            <pre class="text-sm text-gray-600 whitespace-pre-wrap" x-text="prompt.text"></pre>
+                                        </div>
+                                        <div class="flex justify-end">
+                                            <button @click="copyPrompt(prompt.text)" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
+                                                <i class="fas fa-copy mr-1.5"></i> Copy
+                                            </button>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Help Tab Content -->
+                <div x-show="activeTab === 'help'" class="mt-6">
+                    <div class="bg-white rounded-lg shadow overflow-hidden">
+                        <div class="p-6">
+                            <h2 class="text-lg font-medium text-gray-900 mb-4">Help & Documentation</h2>
+                            
+                            <!-- Help tabs -->
+                            <div class="border-b border-gray-200 mb-4">
+                                <nav class="flex -mb-px space-x-4">
+                                    <button @click="helpSection = 'getting-started'" :class="{'border-primary-500 text-primary-600 pb-3 border-b-2': helpSection === 'getting-started', 'text-gray-500 hover:text-gray-700 pb-3': helpSection !== 'getting-started'}" class="font-medium text-sm">
+                                        Getting Started
+                                    </button>
+                                    <button @click="helpSection = 'tools'" :class="{'border-primary-500 text-primary-600 pb-3 border-b-2': helpSection === 'tools', 'text-gray-500 hover:text-gray-700 pb-3': helpSection !== 'tools'}" class="font-medium text-sm">
+                                        Available Tools
+                                    </button>
+                                    <button @click="helpSection = 'faq'" :class="{'border-primary-500 text-primary-600 pb-3 border-b-2': helpSection === 'faq', 'text-gray-500 hover:text-gray-700 pb-3': helpSection !== 'faq'}" class="font-medium text-sm">
+                                        FAQ
+                                    </button>
+                                    <button @click="helpSection = 'troubleshooting'" :class="{'border-primary-500 text-primary-600 pb-3 border-b-2': helpSection === 'troubleshooting', 'text-gray-500 hover:text-gray-700 pb-3': helpSection !== 'troubleshooting'}" class="font-medium text-sm">
+                                        Troubleshooting
+                                    </button>
+                                </nav>
+                            </div>
+                            
+                            <!-- Getting Started content -->
+                            <div x-show="helpSection === 'getting-started'" class="prose prose-sm prose-primary max-w-none">
+                                <h3>Welcome to NexusHub!</h3>
+                                <p>NexusHub is a centralized MCP (Model Context Protocol) server that provides various tools and capabilities to Claude Code and other AI assistants.</p>
+                                
+                                <h4>Quick Start Guide</h4>
+                                <ol>
+                                    <li><strong>Configure API Keys</strong> - Go to the API Keys tab and set up the credentials required for each service.</li>
+                                    <li><strong>Check Service Status</strong> - Ensure all services are running (green status indicators).</li>
+                                    <li><strong>Add Documents</strong> - Add documents to the vector database for context-aware assistance.</li>
+                                    <li><strong>Use Prompts</strong> - Explore the prompts tab for examples of how to effectively instruct the AI.</li>
+                                </ol>
+                                
+                                <h4>System Requirements</h4>
+                                <ul>
+                                    <li>Docker and Docker Compose installed</li>
+                                    <li>Port 8001 available for the HTTP server</li>
+                                    <li>Internet connection for API services</li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Tools content -->
+                            <div x-show="helpSection === 'tools'" class="prose prose-sm prose-primary max-w-none">
+                                <h3>Available Tools</h3>
+                                <p>NexusHub provides the following tools to Claude Code:</p>
+                                
+                                <h4>Filesystem Tools</h4>
+                                <ul>
+                                    <li><strong>fs_list_files</strong> - Lists files and directories</li>
+                                    <li><strong>fs_read_file</strong> - Reads file content</li>
+                                    <li><strong>fs_write_file</strong> - Writes content to a file</li>
+                                </ul>
+                                
+                                <h4>Database Tools</h4>
+                                <ul>
+                                    <li><strong>db_execute_query</strong> - Executes a read-only SQL query</li>
+                                    <li><strong>db_list_tables</strong> - Lists database tables</li>
+                                    <li><strong>db_describe_table</strong> - Describes table schema</li>
+                                    <li><strong>db_insert_data</strong> - Inserts data into a table</li>
+                                </ul>
+                                
+                                <h4>Docker Tools</h4>
+                                <ul>
+                                    <li><strong>docker_list_containers</strong> - Lists Docker containers</li>
+                                    <li><strong>docker_start_container</strong> - Starts a Docker container</li>
+                                    <li><strong>docker_stop_container</strong> - Stops a Docker container</li>
+                                    <li><strong>docker_get_container_logs</strong> - Retrieves container logs</li>
+                                </ul>
+                                
+                                <h4>Search Tools</h4>
+                                <ul>
+                                    <li><strong>serper_search</strong> - Performs web search via Serper API</li>
+                                </ul>
+                                
+                                <h4>Vector Tools</h4>
+                                <ul>
+                                    <li><strong>ingest_docs</strong> - Ingests documents into the vector store</li>
+                                    <li><strong>vector_search</strong> - Performs similarity search over documents</li>
+                                </ul>
+                                
+                                <h4>Other Services</h4>
+                                <ul>
+                                    <li><strong>Memory MCP</strong> - Provides knowledge graph capabilities</li>
+                                    <li><strong>GitHub MCP</strong> - Enables GitHub repository interactions</li>
+                                    <li><strong>Brave Search MCP</strong> - Provides web search capabilities</li>
+                                </ul>
+                            </div>
+                            
+                            <!-- FAQ content -->
+                            <div x-show="helpSection === 'faq'" class="prose prose-sm prose-primary max-w-none">
+                                <h3>Frequently Asked Questions</h3>
+                                
+                                <div class="space-y-4">
+                                    <div>
+                                        <h4>How do I restart a service?</h4>
+                                        <p>You can restart individual services by clicking the "Restart" button next to each service card on the dashboard.</p>
+                                    </div>
+                                    
+                                    <div>
+                                        <h4>Are my API keys stored securely?</h4>
+                                        <p>Yes, all API keys are stored in the server's database and are not exposed in logs or client-side code.</p>
+                                    </div>
+                                    
+                                    <div>
+                                        <h4>Can I use custom models for vector embeddings?</h4>
+                                        <p>Yes, you can configure custom embedding models by modifying the server configuration.</p>
+                                    </div>
+                                    
+                                    <div>
+                                        <h4>How do I add more tools?</h4>
+                                        <p>You can extend the NexusHub server by implementing additional tool definitions in the server code.</p>
+                                    </div>
+                                    
+                                    <div>
+                                        <h4>Can I run NexusHub without Docker?</h4>
+                                        <p>Yes, but Docker is recommended for the best experience. Check the documentation for running without Docker.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Troubleshooting content -->
+                            <div x-show="helpSection === 'troubleshooting'" class="prose prose-sm prose-primary max-w-none">
+                                <h3>Troubleshooting</h3>
+                                
+                                <h4>Service Connection Issues</h4>
+                                <p>If a service is showing as offline:</p>
+                                <ol>
+                                    <li>Check if the Docker container is running</li>
+                                    <li>Verify that API keys are correctly configured</li>
+                                    <li>Look at the container logs for error messages</li>
+                                    <li>Try restarting the service</li>
+                                </ol>
+                                
+                                <h4>API Key Problems</h4>
+                                <p>If API services are not working:</p>
+                                <ol>
+                                    <li>Ensure the API key is valid and not expired</li>
+                                    <li>Check for any usage limits or restrictions</li>
+                                    <li>Try refreshing the environment variables</li>
+                                </ol>
+                                
+                                <h4>Vector Database Issues</h4>
+                                <p>If document ingestion fails:</p>
+                                <ol>
+                                    <li>Check file formats and sizes</li>
+                                    <li>Ensure the vector database is properly initialized</li>
+                                    <li>Verify disk space and permissions</li>
+                                </ol>
+                                
+                                <h4>Getting Support</h4>
+                                <p>For additional help:</p>
+                                <ul>
+                                    <li>Check the server logs for detailed error messages</li>
+                                    <li>Visit the GitHub repository for documentation</li>
+                                    <li>Open an issue for bug reports or feature requests</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Footer -->
+        <footer class="bg-white border-t border-gray-200 py-6">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="mb-4 md:mb-0">
+                        <p class="text-sm text-gray-500">&copy; 2025 NexusHub. All rights reserved.</p>
+                    </div>
+                    
+                    <div class="flex space-x-4">
+                        <a href="https://github.com/your-username/nexushub" class="text-gray-400 hover:text-gray-500" target="_blank">
+                            <i class="fab fa-github text-lg"></i>
+                            <span class="ml-1 text-sm">GitHub Repository</span>
+                        </a>
+                        <a href="https://github.com/your-username/nexushub/issues" class="text-gray-400 hover:text-gray-500" target="_blank">
+                            <i class="fas fa-bug text-lg"></i>
+                            <span class="ml-1 text-sm">Report Issues</span>
+                        </a>
+                        <a href="https://github.com/your-username/nexushub/wiki" class="text-gray-400 hover:text-gray-500" target="_blank">
+                            <i class="fas fa-book text-lg"></i>
+                            <span class="ml-1 text-sm">Documentation</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        
+        <!-- Toast notifications -->
+        <div x-show="toast.visible" 
+             @click="toast.visible = false"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 transform translate-y-2"
+             x-transition:enter-end="opacity-100 transform translate-y-0"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 transform translate-y-0"
+             x-transition:leave-end="opacity-0 transform translate-y-2"
+             class="fixed bottom-4 right-4 px-4 py-3 rounded-lg shadow-lg"
+             :class="{
+                'bg-green-50 text-green-800 border border-green-100': toast.type === 'success',
+                'bg-red-50 text-red-800 border border-red-100': toast.type === 'error',
+                'bg-blue-50 text-blue-800 border border-blue-100': toast.type === 'info'
+             }">
+            <div class="flex items-center">
+                <i class="mr-2"
+                   :class="{
+                      'fas fa-check-circle text-green-500': toast.type === 'success',
+                      'fas fa-exclamation-circle text-red-500': toast.type === 'error',
+                      'fas fa-info-circle text-blue-500': toast.type === 'info'
+                   }"></i>
+                <span x-text="toast.message"></span>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function dashboard() {
+            return {
+                activeTab: 'api-keys',
+                helpSection: 'getting-started',
+                promptCategory: 'general',
+                serverStatus: 'checking',
+                dragover: false,
+                documentUrl: '',
+                
+                serviceStatus: {
+                    nexushub: 'checking',
+                    memory: 'checking',
+                    github: 'checking',
+                    brave: 'checking'
+                },
+                
+                apiKeys: {
+                    brave: '',
+                    github: '',
+                    serper: ''
+                },
+                
+                tempApiKeys: {
+                    brave: '',
+                    github: '',
+                    serper: ''
+                },
+                
+                showApiKey: {
+                    brave: false,
+                    github: false,
+                    serper: false
+                },
+                
+                vectorDocuments: [],
+                
+                toast: {
+                    visible: false,
+                    type: 'info',
+                    message: '',
+                    timeout: null
+                },
+                
+                prompts: {
+                    general: [
+                        {
+                            title: "Analyze codebase structure",
+                            text: "Please analyze the codebase structure of my project. Help me understand the key components, architecture, and how they interact with each other."
+                        },
+                        {
+                            title: "Code review",
+                            text: "Can you review the following code, looking for bugs, security issues, and ways to improve performance or readability?"
+                        },
+                        {
+                            title: "Generate unit tests",
+                            text: "Please generate unit tests for the following code. Focus on covering edge cases and ensuring high test coverage."
+                        }
+                    ],
+                    tools: [
+                        {
+                            title: "Web search for libraries",
+                            text: "Use the brave_web_search tool to find the latest information about [library/framework] and its best practices for my use case."
+                        },
+                        {
+                            title: "Store and retrieve knowledge",
+                            text: "Please use the memory MCP tools to store important information about our project architecture for future reference."
+                        },
+                        {
+                            title: "Document search",
+                            text: "Please use the vector_search tool to find relevant information about [topic] from our documentation."
+                        }
+                    ],
+                    github: [
+                        {
+                            title: "Create repository",
+                            text: "Use the GitHub MCP tools to create a new repository for this project with the following structure and initial files."
+                        },
+                        {
+                            title: "Create PR",
+                            text: "Please create a pull request that includes these changes. The PR title should be '[Feature/Fix]: Brief description' and should include a detailed explanation of the changes and their purpose."
+                        },
+                        {
+                            title: "Review PR",
+                            text: "Please use the GitHub MCP tools to review this PR, focusing on code quality, test coverage, and adherence to our project standards."
+                        }
+                    ],
+                    code: [
+                        {
+                            title: "Implement MVC pattern",
+                            text: "Please help me implement an MVC architecture for this project. Create the necessary model, view, and controller components with proper separation of concerns."
+                        },
+                        {
+                            title: "Refactor using design patterns",
+                            text: "Refactor this code using appropriate design patterns like Factory, Observer, or Strategy to improve maintainability and extensibility."
+                        },
+                        {
+                            title: "Optimize algorithm",
+                            text: "This algorithm has performance issues. Please analyze it and suggest optimizations to improve time and space complexity."
+                        }
+                    ]
+                },
+                
+                init() {
+                    this.checkServerStatus();
+                    this.loadApiKeys();
+                    this.loadVectorDocuments();
+                    
+                    // Initialize services check
+                    this.checkServicesStatus();
+                },
+                
+                checkServerStatus() {
+                    this.serverStatus = 'checking';
+                    
+                    fetch('/dashboard/api/status')
+                        .then(response => {
+                            if (response.ok) {
+                                this.serverStatus = 'online';
+                                return response.json();
+                            } else {
+                                this.serverStatus = 'offline';
+                                throw new Error('Server is offline');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error checking server status:', error);
+                            this.serverStatus = 'offline';
+                        });
+                },
+                
+                checkServicesStatus() {
+                    // In a real implementation, this would fetch status from the server
+                    // For demonstration, we'll simulate service checks
+                    
+                    setTimeout(() => {
+                        this.serviceStatus.nexushub = 'online';
+                    }, 800);
+                    
+                    setTimeout(() => {
+                        this.serviceStatus.memory = 'online';
+                    }, 1200);
+                    
+                    setTimeout(() => {
+                        this.serviceStatus.github = 'online';
+                    }, 1500);
+                    
+                    setTimeout(() => {
+                        this.serviceStatus.brave = 'online';
+                    }, 1800);
+                },
+                
+                loadApiKeys() {
+                    // In a real implementation, this would fetch API keys from the server
+                    // For demonstration, we'll use placeholder values
+                    
+                    setTimeout(() => {
+                        this.apiKeys = {
+                            brave: '******************************',
+                            github: '******************************',
+                            serper: '******************************'
+                        };
+                        
+                        // Copy to temp keys for form editing
+                        this.tempApiKeys = { ...this.apiKeys };
+                    }, 1000);
+                },
+                
+                loadVectorDocuments() {
+                    // In a real implementation, this would fetch documents from the server
+                    // For demonstration, we'll use placeholder values
+                    
+                    setTimeout(() => {
+                        this.vectorDocuments = [
+                            {
+                                id: 'doc-1',
+                                title: 'Getting Started Guide',
+                                source: 'docs/getting-started.md',
+                                created_at: '2025-03-15T10:30:00Z'
+                            },
+                            {
+                                id: 'doc-2',
+                                title: 'API Reference',
+                                source: 'docs/api-reference.pdf',
+                                created_at: '2025-03-20T14:15:00Z'
+                            },
+                            {
+                                id: 'doc-3',
+                                title: 'Architecture Overview',
+                                source: 'docs/architecture.md',
+                                created_at: '2025-04-01T09:45:00Z'
+                            }
+                        ];
+                    }, 1200);
+                },
+                
+                saveApiKey(service) {
+                    // In a real implementation, this would send the key to the server
+                    // For demonstration, we'll simulate a successful save
+                    
+                    if (!this.tempApiKeys[service]) {
+                        this.showToast('error', 'API key cannot be empty');
+                        return;
+                    }
+                    
+                    this.apiKeys[service] = this.tempApiKeys[service];
+                    this.showToast('success', `${this.getServiceName(service)} API key saved successfully`);
+                },
+                
+                restartService(service) {
+                    // In a real implementation, this would restart the service
+                    // For demonstration, we'll simulate a restart
+                    
+                    this.serviceStatus[service] = 'checking';
+                    
+                    this.showToast('info', `Restarting ${this.getServiceName(service)}...`);
+                    
+                    setTimeout(() => {
+                        this.serviceStatus[service] = 'online';
+                        this.showToast('success', `${this.getServiceName(service)} restarted successfully`);
+                    }, 2000);
+                },
+                
+                reloadEnvironment() {
+                    // In a real implementation, this would reload environment variables
+                    // For demonstration, we'll simulate a reload
+                    
+                    this.showToast('info', 'Reloading environment variables...');
+                    
+                    setTimeout(() => {
+                        this.showToast('success', 'Environment variables reloaded successfully');
+                    }, 1500);
+                },
+                
+                handleDrop(event) {
+                    this.dragover = false;
+                    const files = event.dataTransfer.files;
+                    this.processFiles(files);
+                },
+                
+                handleFileSelect(event) {
+                    const files = event.target.files;
+                    this.processFiles(files);
+                },
+                
+                processFiles(files) {
+                    if (files.length === 0) return;
+                    
+                    // In a real implementation, this would upload files to the server
+                    // For demonstration, we'll simulate successful uploads
+                    
+                    this.showToast('info', `Processing ${files.length} file(s)...`);
+                    
+                    setTimeout(() => {
+                        // Add mock documents to the list
+                        for (let i = 0; i < files.length; i++) {
+                            const file = files[i];
+                            const newDoc = {
+                                id: `doc-${Date.now()}-${i}`,
+                                title: file.name,
+                                source: `uploads/${file.name}`,
+                                created_at: new Date().toISOString()
+                            };
+                            
+                            this.vectorDocuments.push(newDoc);
+                        }
+                        
+                        this.showToast('success', `${files.length} file(s) ingested successfully`);
+                    }, 2000);
+                },
+                
+                ingestFromUrl() {
+                    if (!this.documentUrl) {
+                        this.showToast('error', 'Please enter a valid URL');
+                        return;
+                    }
+                    
+                    // In a real implementation, this would fetch and process the document
+                    // For demonstration, we'll simulate successful ingestion
+                    
+                    this.showToast('info', 'Processing document from URL...');
+                    
+                    setTimeout(() => {
+                        // Extract filename from URL
+                        const url = new URL(this.documentUrl);
+                        const filename = url.pathname.split('/').pop() || 'document.pdf';
+                        
+                        // Add mock document to the list
+                        const newDoc = {
+                            id: `doc-${Date.now()}`,
+                            title: filename,
+                            source: this.documentUrl,
+                            created_at: new Date().toISOString()
+                        };
+                        
+                        this.vectorDocuments.push(newDoc);
+                        this.documentUrl = '';
+                        
+                        this.showToast('success', 'Document ingested successfully');
+                    }, 2000);
+                },
+                
+                deleteVectorDocument(id) {
+                    // In a real implementation, this would delete the document from the server
+                    // For demonstration, we'll remove it from the local array
+                    
+                    this.vectorDocuments = this.vectorDocuments.filter(doc => doc.id !== id);
+                    this.showToast('success', 'Document deleted successfully');
+                },
+                
+                copyPrompt(text) {
+                    navigator.clipboard.writeText(text)
+                        .then(() => {
+                            this.showToast('success', 'Prompt copied to clipboard');
+                        })
+                        .catch(err => {
+                            console.error('Error copying text: ', err);
+                            this.showToast('error', 'Failed to copy prompt');
+                        });
+                },
+                
+                showToast(type, message) {
+                    // Clear any existing timeout
+                    if (this.toast.timeout) {
+                        clearTimeout(this.toast.timeout);
+                    }
+                    
+                    // Set toast properties
+                    this.toast.type = type;
+                    this.toast.message = message;
+                    this.toast.visible = true;
+                    
+                    // Hide toast after 3 seconds
+                    this.toast.timeout = setTimeout(() => {
+                        this.toast.visible = false;
+                    }, 3000);
+                },
+                
+                getServiceName(service) {
+                    const names = {
+                        brave: 'Brave Search',
+                        github: 'GitHub',
+                        serper: 'Serper'
+                    };
+                    
+                    return names[service] || service;
+                },
+                
+                formatDate(dateString) {
+                    if (!dateString) return '';
+                    
+                    const date = new Date(dateString);
+                    return date.toLocaleString();
+                }
+            };
+        }
+    </script>
+</body>
+</html>
