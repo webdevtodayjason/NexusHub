@@ -145,6 +145,7 @@ async function handleToolCallRequest(request) {
   stdioLog(`Handling tool call: ${toolName}`);
   
   try {
+    // Support both namespaced and non-namespaced tool calls
     const result = await handleToolCall(toolName, request.params);
     return {
       jsonrpc: '2.0',

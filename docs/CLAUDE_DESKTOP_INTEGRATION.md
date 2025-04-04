@@ -55,11 +55,15 @@ This will start all four MCP servers:
 - GitHub MCP
 - Memory MCP
 
-### Step 2: Prepare the STDIO wrapper script (for STDIO mode)
+### Step 2: Prepare the MCP bridge scripts
 
-Make sure the wrapper script is executable:
+Make the necessary scripts executable:
 
 ```bash
+# For Docker-based installations (recommended)
+chmod +x /path/to/nexushub/nexushub-docker-mcp.sh
+
+# For local installations (if not using Docker)
 chmod +x /path/to/nexushub/nexushub-mcp.sh
 chmod +x /path/to/nexushub/src/mcp/adapters/stdio-wrapper.js
 chmod +x /path/to/nexushub/src/mcp/stdio-adapter.js
@@ -84,7 +88,47 @@ Open Claude Desktop and edit the configuration file (Settings → Edit Configura
 }
 ```
 
-#### Option 2: STDIO Mode Configuration (Recommended)
+#### Option 2: STDIO Mode with Docker (Recommended)
+
+If you're running NexusHub in Docker (most common setup), use the Docker bridge script:
+
+```json
+{
+  "mcpServers": {
+    "nexushub": {
+      "name": "NexusHub MCP Server",
+      "description": "Centralized MCP server with multiple capabilities",
+      "command": "/path/to/nexushub/nexushub-docker-mcp.sh",
+      "enabled": true
+    },
+    "brave-search": {
+      "name": "Brave Search MCP",
+      "description": "Provides web search capabilities via Brave Search API.",
+      "command": "docker",
+      "args": ["exec", "-i", "mcp_brave_search", "node", "dist/index.js"],
+      "enabled": true
+    },
+    "github": {
+      "name": "GitHub MCP",
+      "description": "Provides GitHub repository interaction.",
+      "command": "docker",
+      "args": ["exec", "-i", "mcp_github", "node", "dist/index.js"],
+      "enabled": true
+    },
+    "memory": {
+      "name": "Memory MCP",
+      "description": "Persistent knowledge graph memory.",
+      "command": "docker",
+      "args": ["exec", "-i", "mcp_memory", "node", "dist/index.js"],
+      "enabled": true
+    }
+  }
+}
+```
+
+#### Option 3: STDIO Mode for Local Installation
+
+If you're running NexusHub locally (not in Docker):
 
 ```json
 {
@@ -172,9 +216,12 @@ Limitations:
 These errors occur when non-JSON data is sent to Claude Desktop through STDIO.
 
 Solution:
-1. Check if the wrapper script is redirecting stderr properly
-2. Verify that stdio-wrapper.js is filtering non-JSON output
-3. Look at log files in `/tmp/nexushub-debug-*.log`
+1. If using Docker, make sure you're using the Docker bridge script (`nexushub-docker-mcp.sh`)
+2. Check if the wrapper script is redirecting stderr properly
+3. Verify that the wrapper is filtering non-JSON output
+4. Look at log files:
+   - For Docker bridge: `/tmp/nexushub-docker-debug-*.log`
+   - For local installation: `/tmp/nexushub-debug-*.log`
 
 ### Missing Tools
 
@@ -204,8 +251,12 @@ If Claude Desktop can't connect to NexusHub:
    curl http://localhost:8001/
    ```
 
-2. Test the STDIO adapter manually (for STDIO mode):
+2. Test the bridge script manually:
    ```bash
+   # For Docker installations
+   echo '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}' | /path/to/nexushub/nexushub-docker-mcp.sh
+   
+   # For local installations
    echo '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}' | /path/to/nexushub/nexushub-mcp.sh
    ```
 

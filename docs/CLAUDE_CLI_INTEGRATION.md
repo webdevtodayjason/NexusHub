@@ -34,19 +34,30 @@ Claude CLI supports different "scopes" for MCP servers:
 1. Install Claude CLI according to the [official documentation](https://docs.anthropic.com/en/docs/claude-code/overview)
 2. Have NexusHub installed and running
 
-### Option 1: Add NexusHub as a STDIO Server
+### Option 1: Add NexusHub as a STDIO Server (Docker Installation)
 
-The STDIO transport is recommended as it provides the most reliable communication with Claude CLI.
+If you're running NexusHub in Docker (recommended), use the Docker MCP bridge script:
 
 ```bash
-# Basic syntax for adding a STDIO server
-claude mcp add <name> <command> [args...]
+# Add NexusHub running in Docker to Claude CLI
+claude mcp add Nexushub \
+  --type stdio \
+  --command mcp \
+  --args "-s nexushub=/path/to/nexushub/nexushub-docker-mcp.sh"
+```
 
+Replace `/path/to/nexushub` with your actual NexusHub installation path.
+
+### Option 2: Add NexusHub as a STDIO Server (Local Installation)
+
+If you're running NexusHub locally (not in Docker):
+
+```bash
 # Adding NexusHub as a STDIO server
 claude mcp add nexushub /path/to/nexushub/nexushub-mcp.sh
 ```
 
-### Option 2: Add NexusHub as an HTTP Server
+### Option 3: Add NexusHub as an HTTP Server
 
 If you prefer to use HTTP transport:
 

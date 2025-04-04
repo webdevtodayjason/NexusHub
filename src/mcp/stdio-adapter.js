@@ -141,6 +141,7 @@ async function processRequest(request) {
   } else if (method && method.startsWith('tools/call/')) {
     const toolName = method.split('/').pop();
     try {
+      // For backward compatibility, handle both namespaced and non-namespaced tool names
       const result = await handleToolCall(toolName, request.params);
       return {
         jsonrpc: '2.0',

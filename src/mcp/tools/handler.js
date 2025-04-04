@@ -13,8 +13,13 @@ export async function handleToolCall(toolName, params) {
   logger.debug(`Handling tool call: ${toolName} with params: ${JSON.stringify(params)}`);
   
   try {
+    // Extract base tool name if it has namespace prefix
+    const baseName = toolName.startsWith('mcp__Nexushub__') 
+      ? toolName.replace('mcp__Nexushub__', '')
+      : toolName;
+    
     // Match tool name to implementation
-    switch (toolName) {
+    switch (baseName) {
       // General tools
       case 'get_latest_libs':
         return await getLatestLibs();
